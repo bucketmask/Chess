@@ -29,46 +29,71 @@ namespace Chess
             this.SuspendLayout();
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1000, 500);
+            this.ClientSize = new System.Drawing.Size(1000, 700);
             this.Name = "Chess";
             this.Text = "Chess";
             this.ResumeLayout(false);
 
             //panel for chess board
             Panel panel1 = new Panel();
-            panel1.Location = new Point(0, 0);
+            panel1.Location = new Point(10, 10);
             panel1.Size = new Size(400, 400);
             panel1.Margin = new Padding(0);
             panel1.Padding = new Padding(0);
-            panel1.BackColor = System.Drawing.Color.White;
+            panel1.BackColor = System.Drawing.Color.Blue;
+
+
+            ////makes grid
+            //TableLayoutPanel tableLayoutPanel1 = new TableLayoutPanel();
+            //tableLayoutPanel1.RowCount = 8;
+            //tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 1/8));
+            //tableLayoutPanel1.ColumnCount = 8;
+            //tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1 / 8));
+            //tableLayoutPanel1.Dock = DockStyle.Fill;
+            //tableLayoutPanel1.BackColor = Color.Blue;
+            //tableLayoutPanel1.Margin = new Padding(0);
+            //tableLayoutPanel1.Padding = new Padding(0);
+
+
+            //tableLayoutPanel1.Click += new EventHandler(board.userclick);
+
+            //panel1.Controls.Add(tableLayoutPanel1);
+
 
 
 
             //chess squares as buttons with positional info
-            for(int x = 0; x < 8; x++)
+
+
+            for (int x = 0; x < 8; x++)
             {
                 for(int y = 0; y < 8; y++)
                 {
                     //Console.WriteLine($"({x}:{y}){coord[0]}:{coord[1]}");
 
-                    Button button = new Button();
-                    button.Location = new Point(panel1.Size.Width / 8 * x, panel1.Size.Height / 8 * y);
-                    button.Size = new Size(panel1.Size.Width/8, panel1.Size.Height/8);
-                    button.AutoSize = true;
-                    button.Margin = new Padding(0);
-                    button.Padding = new Padding(0);
+
+                    PictureBox pictureBox1 = new PictureBox();
+                    pictureBox1.Padding = new Padding(0, 0, 0, 0);
+                    pictureBox1.Margin = new Padding(0);
+                    pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
+                    pictureBox1.Location = new Point(x * panel1.Size.Width / 8, y * panel1.Size.Height / 8);
+
                     if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
                     {
-                        button.BackColor = System.Drawing.Color.Black;
+                        pictureBox1.BackColor = Color.Black;
+                        pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);;
+
                     }
                     else 
                     {
-                        button.BackColor = System.Drawing.Color.White;
+                        pictureBox1.BackColor= Color.White;
+                        pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
                     }
 
                     //this will execute a function when the botton is pressed
-                    button.Click += new  EventHandler(board.userclick);
-                    panel1.Controls.Add(button);
+                    //button.Click += new  EventHandler(board.userclick);
+                    pictureBox1.Click += new EventHandler(board.userclick);
+                    panel1.Controls.Add((pictureBox1));
                 }
             }
 
@@ -76,7 +101,7 @@ namespace Chess
 
 
             //draws the chess board on
-            board.DrawBoard();
+            board.DrawBoard(panel1);
 
 
 

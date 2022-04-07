@@ -23,7 +23,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -74,7 +74,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="board.cs" />
+    <Compile Include="pieces.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +121,21 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="assets\bB.png" />
+    <Content Include="assets\bK.png" />
+    <Content Include="assets\bN.png" />
+    <Content Include="assets\bP.png" />
+    <Content Include="assets\bQ.png" />
+    <Content Include="assets\bR.png" />
+    <Content Include="assets\wB.png" />
+    <Content Include="assets\wK.png" />
+    <Content Include="assets\wN.png" />
+    <Content Include="assets\wP.png" />
+    <Content Include="assets\wQ.png" />
+    <Content Include="assets\wR.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
