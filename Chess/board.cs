@@ -53,15 +53,11 @@ namespace Chess
             {
                 if (boardpieces[i] != null) 
                 {
-                    Console.WriteLine(boardpieces[i]);
                     boardpieces[i].pictureBox.Location = new Point(i % 8 * panel1.Size.Width/8, i / 8 * panel1.Size.Width / 8);
                     boardpieces[i].pictureBox.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
                     boardpieces[i].pictureBox.BackColor = ParentSquares[i].BackColor;
                     panel1.Controls.Add(boardpieces[i].pictureBox);
                     boardpieces[i].pictureBox.BringToFront();
-                    Console.WriteLine(boardpieces[i].pictureBox.Size);
-                    Console.WriteLine($"{boardpieces[i].pictureBox.Location}:{ParentSquares[i].Location}");
-                    Console.WriteLine(boardpieces[i].pictureBox.Parent);
                 }
                 
             }
