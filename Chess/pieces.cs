@@ -1,47 +1,83 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Chess
 {
     public class pieces
     {
-        public int x;
-        public int y;
+        public bool isWhite;
+        public PictureBox pictureBox;
+        public pieces(bool isWhite) { this.isWhite = isWhite; }
 
-        public pieces(int inputX, int inputY)
+        public void setPictureBox(string filedir)
         {
-            x = inputX;
-            y = inputY;
-        }
-
-        public virtual void draw(System.Windows.Forms.Panel tableLayoutPanel1)
-        {
-            Console.WriteLine("1");
+            pictureBox = new PictureBox();
+            pictureBox.Image = Image.FromFile(filedir);
+            pictureBox.Padding = new Padding(0, 0, 0, 0);
+            pictureBox.Margin = new Padding(0, 0, 0, 0);
+            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
     }
 
     public class pawn : pieces
     {
-        public pawn(int x, int y) : base(x,y)
-        { 
-            Console.WriteLine(x.ToString());
-        }
-        public override void draw(System.Windows.Forms.Panel tableLayoutPanel1)
+        public pawn(bool isWhite) : base(isWhite)
         {
-            PictureBox pictureBox1 = new PictureBox();
-            pictureBox1.Image = Image.FromFile("C:/Users/liamp/source/repos/Chess/Chess/assets/bP.png");
-            pictureBox1.Padding = new Padding(0,0,0,0);
-            pictureBox1.Size = new Size(tableLayoutPanel1.Width/8,tableLayoutPanel1.Height/8);
-            Console.WriteLine($"{x * tableLayoutPanel1.Width / 8}:{y * tableLayoutPanel1.Height / 8}");
-            pictureBox1.Location = new Point(x* tableLayoutPanel1.Width / 8, y* tableLayoutPanel1.Height / 8);
-            //pictureBox1.BackColor = Color.Yellow;
-            tableLayoutPanel1.Controls.Add(pictureBox1);
-            pictureBox1.BringToFront();
+            if (isWhite) { setPictureBox("../../assets/wP.png"); }
+            else { setPictureBox("../../assets/bP.png"); }
+        }       
+    }
+
+    public class rook : pieces
+    {
+        public rook(bool isWhite) : base(isWhite)
+        {
+            if (isWhite) { setPictureBox("../../assets/wR.png"); }
+            else { setPictureBox("../../assets/bR.png"); }
+
+        }
+    }
+
+    public class bishop : pieces
+    {
+        public bishop(bool isWhite) : base(isWhite)
+        {
+            if (isWhite) { setPictureBox("../../assets/wB.png"); }
+            else { setPictureBox("../../assets/bB.png"); }
+
+        }
+    }
+
+    public class knight : pieces
+    {
+        public knight(bool isWhite) : base(isWhite)
+        {
+            if (isWhite) { setPictureBox("../../assets/wN.png"); }
+            else { setPictureBox("../../assets/bN.png"); }
+
+        }
+    }
+
+    public class queen : pieces
+    {
+        public queen(bool isWhite) : base(isWhite)
+        {
+            if (isWhite) { setPictureBox("../../assets/wQ.png"); }
+            else { setPictureBox("../../assets/bQ.png"); }
+
+        }
+    }
+
+    public class king : pieces
+    {
+        public king(bool isWhite) : base(isWhite)
+        {
+            if (isWhite) { setPictureBox("../../assets/wK.png"); }
+            else { setPictureBox("../../assets/bK.png"); }
+
         }
     }
 }
