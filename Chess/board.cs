@@ -43,9 +43,7 @@ namespace Chess
                 }
             }
 
-            //test
             DrawPieces(panel1, boardpieces);
-            //test
 
         }
 
@@ -120,16 +118,6 @@ namespace Chess
                     Pointer++;
                 }
             }
-
-
-
-
-
-
-
-
-
-
 
 
 
