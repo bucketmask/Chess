@@ -197,7 +197,6 @@ namespace Chess
                 Console.WriteLine("deselect");
                 SelectedPiece = -1;
             }
-            if (SelectedPiece != -1) { Console.WriteLine(SelectedPiece); }
         }
 
 
