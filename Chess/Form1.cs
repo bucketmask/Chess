@@ -35,9 +35,10 @@ namespace Chess
             //panel for chess board
             Panel panel1 = new Panel();
             panel1.Location = new Point(10, 10);
-            panel1.Size = new Size(400, 400);
-            panel1.Margin = new Padding(0);
-            panel1.Padding = new Padding(0);
+            //has to be a multiple of 8
+            panel1.Size = new Size(480, 480);
+            panel1.Margin = new Padding();
+            panel1.Padding = new Padding();
             panel1.BackColor = System.Drawing.Color.Blue;
 
 

@@ -8,10 +8,15 @@ namespace Chess
 {
     public class pieces
     {
+        //pulic varables
         public bool isWhite;
         public PictureBox pictureBox;
+
+        //this runs when a new piece is made
         public pieces(bool isWhite) { this.isWhite = isWhite; }
 
+        //this makes the picture box class for the piece object
+        //runs on piece generation
         public void setPictureBox(string filedir)
         {
             pictureBox = new PictureBox();
@@ -20,8 +25,20 @@ namespace Chess
             pictureBox.Margin = new Padding(0, 0, 0, 0);
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
+
+        //builds a threatmap of bool[64] 1-1 to boardpieces
+        //used for check purposes, build every move
+        //=======maybe put in board class=======
+        public bool[] ThreatMap()
+        {
+            //need to develop
+            bool[] hello = new bool[2];
+            return hello;
+        }
     }
 
+    //All pieces types are a member of the pieces class
+    //useful for move, and other universal functions
     public class pawn : pieces
     {
         public pawn(bool isWhite) : base(isWhite)
