@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace Chess
 {
@@ -35,27 +33,40 @@ namespace Chess
                     ParentSquares[y * 8 + x] = pictureBox1;
                     pictureBox1.Padding = new Padding(0, 0, 0, 0);
                     pictureBox1.Margin = new Padding(0);
-                    pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
-                    pictureBox1.Location = new Point(x * panel1.Size.Width / 8, y * panel1.Size.Height / 8);
+                    pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+                    pictureBox1.Location = new Point(x * boardPanel.Size.Width / 8, y * boardPanel.Size.Height / 8);
 
                     if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
                     {
                         pictureBox1.BackColor = Color.Brown;
-                        pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8); ;
+                        pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8); ;
 
                     }
                     else
                     {
                         pictureBox1.BackColor = Color.White;
-                        pictureBox1.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
+                        pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
                     }
                     pictureBox1.Click += new EventHandler(userClicked);
-                    panel1.Controls.Add((pictureBox1));
+                    boardPanel.Controls.Add((pictureBox1));
 
                 }
             }
+
+
+
             //Draws the pieces that are on the current board
-            DrawPieces(boardPanel, boardpieces);
+            for (int i = 0; i < boardpieces.Length; i++)
+            {
+                if (boardpieces[i] != null)
+                {
+                    DrawPieces(i);
+                }
+
+            }
+
+
+
 
 
 
@@ -70,22 +81,17 @@ namespace Chess
 
         //this takes the array of pieces on the board
         //it then draws each one to their locastion and brings them to the front
-        //==========maybe bring out the for and if, so it can be used at other times==========
-        public void DrawPieces(Panel panel1, pieces[] boardpieces)
+        //i is location of the pieces on boardpieces
+        public void DrawPieces(int i)
         {
-            for (int i = 0; i < boardpieces.Length; i++)
-            {
-                if (boardpieces[i] != null) 
-                {
-                    boardpieces[i].pictureBox.Click += new EventHandler(userClicked);
-                    boardpieces[i].pictureBox.Location = new Point(i % 8 * panel1.Size.Width/8, i / 8 * panel1.Size.Width / 8);
-                    boardpieces[i].pictureBox.Size = new Size(panel1.Size.Width / 8, panel1.Size.Height / 8);
-                    boardpieces[i].pictureBox.BackColor = ParentSquares[i].BackColor;
-                    panel1.Controls.Add(boardpieces[i].pictureBox);
-                    boardpieces[i].pictureBox.BringToFront();
-                }
-                
-            }
+
+            boardpieces[i].pictureBox.Click += new EventHandler(userClicked);
+            boardpieces[i].pictureBox.Location = new Point(i % 8 * boardPanel.Size.Width / 8, i / 8 * boardPanel.Size.Width / 8);
+            boardpieces[i].pictureBox.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+            boardpieces[i].pictureBox.BackColor = ParentSquares[i].BackColor;
+            boardPanel.Controls.Add(boardpieces[i].pictureBox);
+            boardpieces[i].pictureBox.BringToFront();
+
         }
 
         //this simpily moves a selected piece to a location
@@ -121,7 +127,7 @@ namespace Chess
                     {
                         Pointer += number - 1;
                     }
-                        if (fenSplit[i][j].ToString().ToLower() == "p")
+                    if (fenSplit[i][j].ToString().ToLower() == "p")
                     {
                         if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(false); }
                         else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(true); }
@@ -167,24 +173,24 @@ namespace Chess
             int place = pictureBox.Location.X / (boardPanel.Size.Width / 8) + pictureBox.Location.Y / (boardPanel.Size.Width / 8) * 8;
             //Console.WriteLine(place);
 
-            if (SelectedPiece == -1 && boardpieces[place] != null) 
-            { 
-                Console.WriteLine("select piece"); 
+            if (SelectedPiece == -1 && boardpieces[place] != null)
+            {
+                Console.WriteLine("select piece");
                 SelectedPiece = place;
             }
-            else if (SelectedPiece != -1 && AvalibleMoves[place] == true) 
-            { 
+            else if (SelectedPiece != -1 && AvalibleMoves[place] == true)
+            {
                 Console.WriteLine("can move");
                 move(place);
                 SelectedPiece = -1;
             }
-            else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null) 
-            { 
+            else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null)
+            {
                 Console.WriteLine("select other");
                 SelectedPiece = place;
             }
-            else 
-            { 
+            else
+            {
                 Console.WriteLine("deselect");
                 SelectedPiece = -1;
             }
