@@ -169,7 +169,7 @@ namespace Chess
         public void userClicked(object sender, EventArgs e)
         {
             PictureBox pictureBox = sender as PictureBox;
-            Console.WriteLine($"{pictureBox.Location}");
+            //Console.WriteLine($"{pictureBox.Location}");
             int place = pictureBox.Location.X / (boardPanel.Size.Width / 8) + pictureBox.Location.Y / (boardPanel.Size.Width / 8) * 8;
             //Console.WriteLine(place);
 
@@ -180,9 +180,12 @@ namespace Chess
             }
             else if (SelectedPiece != -1 && AvalibleMoves[place] == true)
             {
-                Console.WriteLine("can move");
-                move(place);
-                SelectedPiece = -1;
+                if(place != SelectedPiece)
+                {
+                    Console.WriteLine("can move");
+                    move(place);
+                    SelectedPiece = -1;
+                }
             }
             else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null)
             {
