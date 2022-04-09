@@ -38,13 +38,13 @@ namespace Chess
 
                     if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
                     {
-                        pictureBox1.BackColor = Color.Brown;
+                        pictureBox1.BackColor = Color.DarkCyan;
                         pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8); ;
 
                     }
                     else
                     {
-                        pictureBox1.BackColor = Color.White;
+                        pictureBox1.BackColor = Color.LightCyan;
                         pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
                     }
                     pictureBox1.Click += new EventHandler(userClicked);
