@@ -101,7 +101,57 @@ namespace Chess
         {
             if (isWhite == 0) { setPictureBox("../../assets/wP.png"); }
             else { setPictureBox("../../assets/bP.png"); }
-        }       
+        }
+
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+            bool[] moves = new bool[64];
+            int[] xY = ConvertToXY(currentLocation);
+            int location;
+            int[] file = new int[] {6, 1};
+            int[] xVariations = new int[] {-1, 1};
+            int[] move = new int[] { xY[0], xY[1]};
+            int colour = 1;
+            if(isWhite == 0) { colour = -1; }
+            
+
+            for(int i = 1; i < 3; i++)
+            {
+                move[1] = xY[1] + i * colour;
+                move[0] = xY[0];
+                if (move[1] < 8 && move[1] > -1){
+                    location = ConverToLocation(move);
+                    if (boardpieces[location] == null)
+                    {
+                        if (i == 1)
+                        {
+                            moves[location] = true;
+                        }
+                        else if (xY[1] == file[isWhite])
+                        {
+                            Console.WriteLine($"{location}");
+                            moves[location] = true;
+                        }
+                        Console.WriteLine($"{xY[1]}:{file[isWhite]}");
+                    }
+                }
+                move[1] = xY[1] + 1 * colour;
+                move[0] = xY[0] + xVariations[i-1];
+                if (move[0] < 8 && move[0] > -1 && move[1] < 8 && move[1] > -1) {
+                    location = ConverToLocation(move);
+                    if (boardpieces[location] != null && boardpieces[location].isWhite != this.isWhite)
+                    {
+                        moves[location] = true;
+                    }
+                }
+
+            }
+
+
+
+
+            return moves;
+        }
     }
 
     public class rook : pieces
@@ -170,7 +220,7 @@ namespace Chess
         }
         public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
         {
-            int[] xVariations = new int[] { -1, 1, -1, 0, 0, 1, 1, 1 };
+            int[] xVariations = new int[] { -1, -1, -1, 0, 0, 1, 1, 1 };
             int[] yVariations = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
 
             bool[] moves = FindMovesStraightLinesVariations(currentLocation, boardpieces, xVariations, yVariations);

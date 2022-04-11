@@ -22,7 +22,7 @@ namespace Chess
             boardPanel = panel1;
             //builds the board from a given fen
             //each pieces is a pieces class
-            boardpieces = CreateBoardFromFen("rnbqkbnr/pppppppp/8/7r/7k/8/PPPPPPPP/RNBQKBNR");
+            boardpieces = CreateBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 
 
 
