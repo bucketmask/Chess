@@ -31,6 +31,55 @@ namespace Chess
             return moves;
         }
 
+        public bool[] FindMovesFromVariations(int currentLocation, pieces[] boardpieces, int[] xVariations, int[] yVariations)
+        {
+            bool[] moves = new bool[64];
+            int[] xY = ConvertToXY(currentLocation);
+            int[] move = new int[2];
+
+            for (int i = 0; i < xVariations.Length; i++)
+            {
+                move[0] = xVariations[i] + xY[0];
+                move[1] = yVariations[i] + xY[1];
+                if (move[0] < 8 && move[0] > -1 && move[1] < 8 && move[1] > -1)
+                {
+                    int moveLocation = ConverToLocation(move);
+                    if (boardpieces[moveLocation] == null || boardpieces[moveLocation].isWhite != this.isWhite)
+                    {
+                        moves[moveLocation] = true;
+                    }
+                }
+            }
+            return moves;
+        }
+
+        public bool[] FindMovesStraightLinesVariations(int currentLocation, pieces[] boardpieces, int[] xVariations, int[] yVariations)
+        {
+            bool[] moves = new bool[64];
+            int[] xY = ConvertToXY(currentLocation);
+            int[] move = new int[2];
+
+
+            for (int i = 0; i < xVariations.Length; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    move[0] = (xVariations[i] * j) + xY[0];
+                    move[1] = (yVariations[i] * j) + xY[1];
+                    if (move[0] < 8 && move[0] > -1 && move[1] < 8 && move[1] > -1)
+                    {
+                        int moveLocation = ConverToLocation(move);
+                        if (boardpieces[moveLocation] == null) {moves[moveLocation] = true;}
+                        else if(boardpieces[moveLocation].isWhite != this.isWhite) { moves[moveLocation] = true; break; }
+                        else if(boardpieces[moveLocation].isWhite == this.isWhite) { break; }
+                    }
+                }
+            }
+
+
+            return moves;
+        }
+
         public int[] ConvertToXY(int location)
         {
             int[] XY = new int[] { location % 8, location / 8 };
@@ -61,7 +110,15 @@ namespace Chess
         {
             if (isWhite == 0) { setPictureBox("../../assets/wR.png"); }
             else { setPictureBox("../../assets/bR.png"); }
+        }
 
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+            int[] xVariations = new int[] { -1, 1, 0, 0 };
+            int[] yVariations = new int[] { 0, 0, -1, 1 };
+
+            bool[] moves = FindMovesStraightLinesVariations(currentLocation, boardpieces, xVariations, yVariations);
+            return moves;
         }
     }
 
@@ -72,6 +129,16 @@ namespace Chess
             if (isWhite == 0) { setPictureBox("../../assets/wB.png"); }
             else { setPictureBox("../../assets/bB.png"); }
 
+        }
+
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+
+            int[] xVariations = new int[] { -1, -1, 1, 1 };
+            int[] yVariations = new int[] { -1, 1, -1, 1 };
+
+            bool[] moves = FindMovesStraightLinesVariations(currentLocation, boardpieces, xVariations, yVariations);
+            return moves;
         }
     }
 
@@ -86,25 +153,9 @@ namespace Chess
 
         public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
         {
-            bool[] moves = new bool[64];
             int[] xVariations = new int[] {-1, 1, -2, 2, -2, 2, -1, 1 };
             int[] yVariations = new int[] {2, 2, 1, 1, -1, -1, -2, -2 };
-            int[] xY = ConvertToXY(currentLocation);
-            int[] move = new int[2];
-
-            for (int i = 0; i < 8; i++)
-            {
-                move[0] = xVariations[i] + xY[0];
-                move[1] = yVariations[i] + xY[1];
-                if(move[0] < 8 && move[0] > -1 && move[1] < 8 && move[1] > -1)
-                {
-                    int moveLocation = ConverToLocation(move);
-                    if(boardpieces[moveLocation] == null || boardpieces[moveLocation].isWhite != this.isWhite)
-                    {
-                        moves[moveLocation] = true;
-                    }
-                }
-            }
+            bool[] moves = FindMovesFromVariations(currentLocation, boardpieces, xVariations, yVariations);
             return moves;
         }
     }
@@ -117,6 +168,14 @@ namespace Chess
             else { setPictureBox("../../assets/bQ.png"); }
 
         }
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+            int[] xVariations = new int[] { -1, 1, -1, 0, 0, 1, 1, 1 };
+            int[] yVariations = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+            bool[] moves = FindMovesStraightLinesVariations(currentLocation, boardpieces, xVariations, yVariations);
+            return moves;
+        }
     }
 
     public class king : pieces
@@ -126,6 +185,14 @@ namespace Chess
             if (isWhite == 0) { setPictureBox("../../assets/wK.png"); }
             else { setPictureBox("../../assets/bK.png"); }
 
+        }
+
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+            int[] xVariations = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
+            int[] yVariations = new int[] { 1, 1, 1, 0, 0, -1, -1, -1 };
+            bool[] moves = FindMovesFromVariations(currentLocation, boardpieces, xVariations, yVariations);
+            return moves;
         }
     }
 }
