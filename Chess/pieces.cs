@@ -9,11 +9,11 @@ namespace Chess
     public class pieces
     {
         //pulic varables
-        public bool isWhite;
+        public int isWhite;
         public PictureBox pictureBox;
 
         //this runs when a new piece is made
-        public pieces(bool isWhite) { this.isWhite = isWhite; }
+        public pieces(int isWhite) { this.isWhite = isWhite; }
 
         //this makes the picture box class for the piece object
         //runs on piece generation
@@ -25,34 +25,41 @@ namespace Chess
             pictureBox.Margin = new Padding(0, 0, 0, 0);
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
-
-        //builds a threatmap of bool[64] 1-1 to boardpieces
-        //used for check purposes, build every move
-        //=======maybe put in board class=======
-        public bool[] ThreatMap()
+        public virtual bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
         {
-            //need to develop
-            bool[] hello = new bool[2];
-            return hello;
+            bool[] moves = new bool[64];
+            return moves;
         }
-    }
 
+        public int[] ConvertToXY(int location)
+        {
+            int[] XY = new int[] { location % 8, location / 8 };
+            return XY;
+        }
+
+        public int ConverToLocation(int[] XY)
+        {
+            int location = (XY[1] * 8) + XY[0];
+            return location;
+        }
+
+    }
     //All pieces types are a member of the pieces class
     //useful for move, and other universal functions
     public class pawn : pieces
     {
-        public pawn(bool isWhite) : base(isWhite)
+        public pawn(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wP.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wP.png"); }
             else { setPictureBox("../../assets/bP.png"); }
         }       
     }
 
     public class rook : pieces
     {
-        public rook(bool isWhite) : base(isWhite)
+        public rook(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wR.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wR.png"); }
             else { setPictureBox("../../assets/bR.png"); }
 
         }
@@ -60,9 +67,9 @@ namespace Chess
 
     public class bishop : pieces
     {
-        public bishop(bool isWhite) : base(isWhite)
+        public bishop(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wB.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wB.png"); }
             else { setPictureBox("../../assets/bB.png"); }
 
         }
@@ -70,19 +77,43 @@ namespace Chess
 
     public class knight : pieces
     {
-        public knight(bool isWhite) : base(isWhite)
+        public knight(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wN.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wN.png"); }
             else { setPictureBox("../../assets/bN.png"); }
 
+        }
+
+        public override bool[] AvalibleMoves(int currentLocation, pieces[] boardpieces)
+        {
+            bool[] moves = new bool[64];
+            int[] xVariations = new int[] {-1, 1, -2, 2, -2, 2, -1, 1 };
+            int[] yVariations = new int[] {2, 2, 1, 1, -1, -1, -2, -2 };
+            int[] xY = ConvertToXY(currentLocation);
+            int[] move = new int[2];
+
+            for (int i = 0; i < 8; i++)
+            {
+                move[0] = xVariations[i] + xY[0];
+                move[1] = yVariations[i] + xY[1];
+                if(move[0] < 8 && move[0] > -1 && move[1] < 8 && move[1] > -1)
+                {
+                    int moveLocation = ConverToLocation(move);
+                    if(boardpieces[moveLocation] == null || boardpieces[moveLocation].isWhite != this.isWhite)
+                    {
+                        moves[moveLocation] = true;
+                    }
+                }
+            }
+            return moves;
         }
     }
 
     public class queen : pieces
     {
-        public queen(bool isWhite) : base(isWhite)
+        public queen(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wQ.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wQ.png"); }
             else { setPictureBox("../../assets/bQ.png"); }
 
         }
@@ -90,9 +121,9 @@ namespace Chess
 
     public class king : pieces
     {
-        public king(bool isWhite) : base(isWhite)
+        public king(int isWhite) : base(isWhite)
         {
-            if (isWhite) { setPictureBox("../../assets/wK.png"); }
+            if (isWhite == 0) { setPictureBox("../../assets/wK.png"); }
             else { setPictureBox("../../assets/bK.png"); }
 
         }

@@ -65,6 +65,7 @@ namespace Chess
             //adds the elements
             this.Controls.Add(panel2);
             panel2.Controls.Add(panel1);
+
         }
 
     }

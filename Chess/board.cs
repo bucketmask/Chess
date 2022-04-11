@@ -12,6 +12,9 @@ namespace Chess
         pieces[] boardpieces;
         bool[] AvalibleMoves = new bool[64];
         int SelectedPiece = -1;
+        String[] PlayerNamesWB = new string[] { "default", "default" };
+        int player = 0;
+        int Tick = 0;
 
         public board(Panel panel1)
         {
@@ -65,19 +68,17 @@ namespace Chess
 
             }
 
-
-
-
-
-
-            //test+++++++++++++++++++++++++++
-            for (int i = 0; i < AvalibleMoves.Length; i++)
-            {
-                AvalibleMoves[i] = true;
-            }
-            //test+++++++++++++++++++++++++++
-
         }
+
+        //every turn this is ran
+        private void tick()
+        {
+            Tick++;
+        }
+
+
+
+
 
         //this takes the array of pieces on the board
         //it then draws each one to their locastion and brings them to the front
@@ -107,6 +108,15 @@ namespace Chess
             boardpieces[place].pictureBox.Location = new Point(place % 8 * boardPanel.Size.Width / 8, place / 8 * boardPanel.Size.Width / 8);
         }
 
+        //builds a threatmap of bool[64] 1-1 to boardpieces
+        //used for check purposes, build every move
+        public bool[] ThreatMap()
+        {
+            //need to develop
+            bool[] hello = new bool[2];
+            return hello;
+        }
+
         //creats the board and puts the pieses object into a array
         //returns the array
         public pieces[] CreateBoardFromFen(string fen)
@@ -129,35 +139,35 @@ namespace Chess
                     }
                     if (fenSplit[i][j].ToString().ToLower() == "p")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(0); }
 
                     }
 
                     else if (fenSplit[i][j].ToString().ToLower() == "r")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new rook(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new rook(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new rook(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new rook(0); }
                     }
                     else if (fenSplit[i][j].ToString().ToLower() == "b")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(0); }
                     }
                     else if (fenSplit[i][j].ToString().ToLower() == "n")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new knight(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new knight(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new knight(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new knight(0); }
                     }
                     else if (fenSplit[i][j].ToString().ToLower() == "k")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new king(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new king(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new king(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new king(0); }
                     }
                     else if (fenSplit[i][j].ToString().ToLower() == "q")
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new queen(false); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new queen(true); }
+                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new queen(1); }
+                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new queen(0); }
                     }
                     Pointer++;
                 }
@@ -173,29 +183,35 @@ namespace Chess
             int place = pictureBox.Location.X / (boardPanel.Size.Width / 8) + pictureBox.Location.Y / (boardPanel.Size.Width / 8) * 8;
             //Console.WriteLine(place);
 
-            if (SelectedPiece == -1 && boardpieces[place] != null)
+            if (PlayerNamesWB[Tick % 2] == PlayerNamesWB[player])
             {
-                Console.WriteLine("select piece");
-                SelectedPiece = place;
-            }
-            else if (SelectedPiece != -1 && AvalibleMoves[place] == true)
-            {
-                if(place != SelectedPiece)
+                if (SelectedPiece == -1 && boardpieces[place] != null && boardpieces[place].isWhite == Tick % 2)
                 {
-                    Console.WriteLine("can move");
-                    move(place);
+                    Console.WriteLine("select piece");
+                    SelectedPiece = place;
+                    AvalibleMoves = boardpieces[place].AvalibleMoves(place, boardpieces);
+                }
+                else if (SelectedPiece != -1 && AvalibleMoves[place] == true)
+                {
+                    if (place != SelectedPiece)
+                    {
+                        Console.WriteLine("can move");
+                        move(place);
+                        SelectedPiece = -1;
+                        tick();
+                    }
+                }
+                else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null && boardpieces[place].isWhite == Tick % 2)
+                {
+                    Console.WriteLine("select other");
+                    SelectedPiece = place;
+                    AvalibleMoves = boardpieces[place].AvalibleMoves(place, boardpieces);
+                }
+                else
+                {
+                    Console.WriteLine("deselect");
                     SelectedPiece = -1;
                 }
-            }
-            else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null)
-            {
-                Console.WriteLine("select other");
-                SelectedPiece = place;
-            }
-            else
-            {
-                Console.WriteLine("deselect");
-                SelectedPiece = -1;
             }
         }
 
