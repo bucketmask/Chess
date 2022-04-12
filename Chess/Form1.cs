@@ -53,12 +53,10 @@ namespace Chess
             panel2.Margin = new Padding(0);
             panel2.Padding = new Padding(0);
             panel2.BackColor = Color.Black;
-
-
-
+           
+            
             //creates the chess board class
             board board = new board(panel1);
-
 
 
 

@@ -8,6 +8,7 @@ namespace Chess
 {
     public class pieces
     {
+
         //pulic varables
         public int isWhite;
         public PictureBox pictureBox;
@@ -129,10 +130,8 @@ namespace Chess
                         }
                         else if (xY[1] == file[isWhite])
                         {
-                            Console.WriteLine($"{location}");
                             moves[location] = true;
                         }
-                        Console.WriteLine($"{xY[1]}:{file[isWhite]}");
                     }
                 }
                 move[1] = xY[1] + 1 * colour;

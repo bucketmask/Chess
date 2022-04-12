@@ -14,20 +14,66 @@ namespace Chess
         int SelectedPiece = -1;
         String[] PlayerNamesWB = new string[] { "default", "default" };
         int player = 0;
-        int Tick = 0;
+        History history;
+        int Tick;
 
         public board(Panel panel1)
         {
             //makes the panel and form public to board class
             boardPanel = panel1;
-            //builds the board from a given fen
+            //Creates history class, for:
+            //-legality resons
+            //-multiplayer + spectators
+            //-review game
+            history = new History();
+            Tick = history.MoveNumber;
             //each pieces is a pieces class
-            boardpieces = CreateBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+            boardpieces = history.CreateBoardFromFen();
 
 
 
             // creates the squares on the board
             //adds them to a identical array to board pieces so they can be called appon
+            DrawBoard();
+
+            //Draws the pieces that are on the current board
+            DrawAllPieces();
+
+        }
+
+
+
+
+
+
+        //this takes the array of pieces on the board
+        //it then draws each one to their locastion and brings them to the front
+        //i is location of the pieces on boardpieces
+        void DrawPieces(int i)
+        {
+
+            boardpieces[i].pictureBox.Click += new EventHandler(userClicked);
+            boardpieces[i].pictureBox.Location = new Point(i % 8 * boardPanel.Size.Width / 8, i / 8 * boardPanel.Size.Width / 8);
+            boardpieces[i].pictureBox.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+            boardpieces[i].pictureBox.BackColor = ParentSquares[i].BackColor;
+            boardPanel.Controls.Add(boardpieces[i].pictureBox);
+            boardpieces[i].pictureBox.BringToFront();
+
+        }
+        void DrawAllPieces()
+        {
+            for (int i = 0; i < boardpieces.Length; i++)
+            {
+                if (boardpieces[i] != null)
+                {
+                    DrawPieces(i);
+                }
+
+            }
+        }
+
+        void DrawBoard()
+        {
             for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
@@ -55,48 +101,10 @@ namespace Chess
 
                 }
             }
-
-
-
-            //Draws the pieces that are on the current board
-            for (int i = 0; i < boardpieces.Length; i++)
-            {
-                if (boardpieces[i] != null)
-                {
-                    DrawPieces(i);
-                }
-
-            }
-
-        }
-
-        //every turn this is ran
-        private void tick()
-        {
-            Tick++;
-        }
-
-
-
-
-
-        //this takes the array of pieces on the board
-        //it then draws each one to their locastion and brings them to the front
-        //i is location of the pieces on boardpieces
-        public void DrawPieces(int i)
-        {
-
-            boardpieces[i].pictureBox.Click += new EventHandler(userClicked);
-            boardpieces[i].pictureBox.Location = new Point(i % 8 * boardPanel.Size.Width / 8, i / 8 * boardPanel.Size.Width / 8);
-            boardpieces[i].pictureBox.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
-            boardpieces[i].pictureBox.BackColor = ParentSquares[i].BackColor;
-            boardPanel.Controls.Add(boardpieces[i].pictureBox);
-            boardpieces[i].pictureBox.BringToFront();
-
         }
 
         //this simpily moves a selected piece to a location
-        public void move(int place)
+        void move(int place)
         {
             if (boardpieces[place] != null)
             {
@@ -110,73 +118,16 @@ namespace Chess
 
         //builds a threatmap of bool[64] 1-1 to boardpieces
         //used for check purposes, build every move
-        public bool[] ThreatMap()
+        bool[] ThreatMap()
         {
             //need to develop
             bool[] hello = new bool[2];
             return hello;
         }
 
-        //creats the board and puts the pieses object into a array
-        //returns the array
-        public pieces[] CreateBoardFromFen(string fen)
-        {
-            pieces[] boardpieces = new pieces[64];
-
-            string[] fenSplit = fen.Split('/');
-
-            //uses a pointer
-            //im amazing
-            int Pointer = 0;
-            for (int i = 0; i < fenSplit.Length; i++)
-            {
-                for (int j = 0; j < fenSplit[i].Length; j++)
-                {
-                    int number;
-                    if (int.TryParse(fenSplit[i][j].ToString(), out number))
-                    {
-                        Pointer += number - 1;
-                    }
-                    if (fenSplit[i][j].ToString().ToLower() == "p")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new pawn(0); }
-
-                    }
-
-                    else if (fenSplit[i][j].ToString().ToLower() == "r")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new rook(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new rook(0); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "b")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new bishop(0); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "n")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new knight(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new knight(0); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "k")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new king(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new king(0); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "q")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new queen(1); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new queen(0); }
-                    }
-                    Pointer++;
-                }
-            }
-            return boardpieces;
-        }
 
         //everytime a user clicks a pieces or square this handles it
-        public void userClicked(object sender, EventArgs e)
+        void userClicked(object sender, EventArgs e)
         {
             PictureBox pictureBox = sender as PictureBox;
             //Console.WriteLine($"{pictureBox.Location}");
@@ -187,7 +138,6 @@ namespace Chess
             {
                 if (SelectedPiece == -1 && boardpieces[place] != null && boardpieces[place].isWhite == Tick % 2)
                 {
-                    Console.WriteLine("select piece");
                     SelectedPiece = place;
                     AvalibleMoves = boardpieces[place].AvalibleMoves(place, boardpieces);
                 }
@@ -195,21 +145,18 @@ namespace Chess
                 {
                     if (place != SelectedPiece)
                     {
-                        Console.WriteLine("can move");
                         move(place);
+                        history.LogMove(boardpieces[SelectedPiece]);
                         SelectedPiece = -1;
-                        tick();
                     }
                 }
                 else if (SelectedPiece != -1 && AvalibleMoves[place] == false && boardpieces[place] != null && boardpieces[place].isWhite == Tick % 2)
                 {
-                    Console.WriteLine("select other");
                     SelectedPiece = place;
                     AvalibleMoves = boardpieces[place].AvalibleMoves(place, boardpieces);
                 }
                 else
                 {
-                    Console.WriteLine("deselect");
                     SelectedPiece = -1;
                 }
             }
