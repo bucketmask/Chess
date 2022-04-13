@@ -33,6 +33,7 @@ namespace Chess
             static int chessBoardSize = 480;
             static int borderSize = 20;
             Panel boardPanel;
+            PictureBox[] ParentSquares = new PictureBox[64];
             public board(Form graphicsForm)
             {
                 //panel for chess board
@@ -61,7 +62,37 @@ namespace Chess
             }
             private void createBackSquares()
             {
-                
+                for (int y = 0; y < 8; y++)
+                {
+                    for (int x = 0; x < 8; x++)
+                    {
+                        PictureBox pictureBox1 = new PictureBox();
+                        ParentSquares[y * 8 + x] = pictureBox1;
+                        pictureBox1.Padding = new Padding(0, 0, 0, 0);
+                        pictureBox1.Margin = new Padding(0);
+                        pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+                        pictureBox1.Location = new Point(x * boardPanel.Size.Width / 8, y * boardPanel.Size.Height / 8);
+
+                        if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
+                        {
+                            pictureBox1.BackColor = Color.DarkCyan;
+                            pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8); ;
+
+                        }
+                        else
+                        {
+                            pictureBox1.BackColor = Color.LightCyan;
+                            pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+                        }
+                        //pictureBox1.Click += new EventHandler(userClicked);
+                        boardPanel.Controls.Add((pictureBox1));
+
+                    }
+                }
+            }
+            public void DrawPieceOnBoard(PictureBox piece)
+            {
+
             }
 
         }
