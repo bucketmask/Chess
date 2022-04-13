@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace Chess
 {
-    class Graphics
+    public class Graphics
     {
         public Graphics(Form1 graphicsForm)
         {
@@ -24,17 +24,17 @@ namespace Chess
             graphicsForm.ResumeLayout(false);
 
 
-            //creates the chess board class
-            Graphics.board graphicalBoard = new Graphics.board(graphicsForm);
 
         }
-        public class board
+
+        public class GraphicalBoard
         {
             static int chessBoardSize = 480;
             static int borderSize = 20;
             Panel boardPanel;
             PictureBox[] ParentSquares = new PictureBox[64];
-            public board(Form graphicsForm)
+            PictureBox[] PiecesOnBoard = new PictureBox[64];
+            public GraphicalBoard(Form graphicsForm)
             {
                 //panel for chess board
                 boardPanel = new Panel();
@@ -70,19 +70,19 @@ namespace Chess
                         ParentSquares[y * 8 + x] = pictureBox1;
                         pictureBox1.Padding = new Padding(0, 0, 0, 0);
                         pictureBox1.Margin = new Padding(0);
-                        pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
-                        pictureBox1.Location = new Point(x * boardPanel.Size.Width / 8, y * boardPanel.Size.Height / 8);
+                        pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
+                        pictureBox1.Location = new Point(x * chessBoardSize / 8, y * chessBoardSize / 8);
 
                         if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
                         {
                             pictureBox1.BackColor = Color.DarkCyan;
-                            pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8); ;
+                            pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8); ;
 
                         }
                         else
                         {
                             pictureBox1.BackColor = Color.LightCyan;
-                            pictureBox1.Size = new Size(boardPanel.Size.Width / 8, boardPanel.Size.Height / 8);
+                            pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
                         }
                         //pictureBox1.Click += new EventHandler(userClicked);
                         boardPanel.Controls.Add((pictureBox1));
@@ -90,23 +90,24 @@ namespace Chess
                     }
                 }
             }
-            public void DrawPieceOnBoard(PictureBox piece)
+            public void DrawPieceOnBoard(int location, string piecesDir)
             {
-
-            }
-
-        }
-        public class pieces
-        {
-            public pieces(int location, string piecesDir)
-            {
+                int[] xY = Pieces.CovertLocationToXY(location);
                 PictureBox pictureBox = new PictureBox();
                 pictureBox.Image = Image.FromFile(piecesDir);
                 pictureBox.Padding = new Padding(0, 0, 0, 0);
                 pictureBox.Margin = new Padding(0, 0, 0, 0);
                 pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox.Location = new Point(xY[0] * chessBoardSize / 8, xY[1] * chessBoardSize / 8);
+                pictureBox.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
+                pictureBox.BackColor = ParentSquares[location].BackColor;
+                //pictureBox.Click += new EventHandler(userClicked);
+                PiecesOnBoard[location] = pictureBox;
+                boardPanel.Controls.Add(pictureBox);
+                pictureBox.BringToFront();
             }
 
         }
+
     }
 }

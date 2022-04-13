@@ -6,6 +6,11 @@ namespace Chess
 {
     public class Board
     {
+        //History history;
+        //Graphics.board GraphicalBoard;
+        public Board(History history, Graphics.GraphicalBoard GraphicalBoard)
+        {
 
+        }
     }
 }
