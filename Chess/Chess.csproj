@@ -74,9 +74,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="board.cs" />
+    <Compile Include="Board.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Graphics.cs" />
     <Compile Include="History.cs" />
-    <Compile Include="pieces.cs" />
+    <Compile Include="Pieces.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
