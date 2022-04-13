@@ -100,7 +100,11 @@ namespace Chess
         {
             public pieces(int location, string piecesDir)
             {
-
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Image = Image.FromFile(piecesDir);
+                pictureBox.Padding = new Padding(0, 0, 0, 0);
+                pictureBox.Margin = new Padding(0, 0, 0, 0);
+                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             }
 
         }
