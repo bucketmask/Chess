@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Chess
 {
-    class Main
+    public class Main
     {
+        public Graphics Graphics;
         public Main(Form1 form)
         {
-            Graphics graphics = new Graphics(form);
+            Graphics = new Graphics(form);
             //creates the chess board class
-            Graphics.GraphicalBoard graphicalBoard = new Graphics.GraphicalBoard(form);
-            History history = new History();
-            Board board = new Board(history, graphicalBoard);
+            History history = new History(3, Graphics);
+            Board board = new Board(history, Graphics);
         }
     }
 }
