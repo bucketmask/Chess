@@ -11,6 +11,8 @@ namespace Chess
         //  location is another word for the index of the piece in the pieces[] of 64 which represents the board
         //  All components of the application will follow this structure
         //=++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+        //all graphical board uses are in, initialization and userclicks, so can make virtual board :)
+
 
         //graphic is used for mkaing the graphics board
         Graphics graphics;
@@ -19,14 +21,18 @@ namespace Chess
         bool[] avalibleMoves = new bool[64];
         //history can change, and it is used to get current board, to see if their is game, contains all information
         History history;
-        Graphics.GraphicalBoard GraphicalBoard;
+        GraphicalBoard GraphicalBoard;
+        Main main;
 
         //on startup, board is given a new history, and so it makes a new board graphics and draws the pieces.
-        public Board(History history1, Graphics graphics1)
+        public Board(History history1, Graphics graphics1, Main main1)
         {
+            main = main1;
             graphics = graphics1;
             history = history1;
-            GraphicalBoard = new Graphics.GraphicalBoard(graphics, this);
+            //on initialization reset graphicalBoard board
+            GraphicalBoard = graphics.GraphicalBoard;
+            graphics.GraphicalBoard.CurrentBoard = this;
             piecesOnBoard = history.GetCurrentBoard();
             GraphicalBoard.DrawAllPiecesOnBoard(piecesOnBoard);
         }
@@ -80,7 +86,6 @@ namespace Chess
                     }
                 }
             }
-            Console.WriteLine(kingInCheck);
             return kingInCheck;
         }
 
@@ -129,7 +134,7 @@ namespace Chess
             PictureBox pictureBox = sender as PictureBox;
             if (playerColour == 3) { playerColour = playerTurn; }
             //Console.WriteLine($"{pictureBox.Location}");
-            int location = pictureBox.Location.X / (Graphics.GraphicalBoard.chessBoardSize / 8) + pictureBox.Location.Y / (Graphics.GraphicalBoard.chessBoardSize / 8) * 8;
+            int location = pictureBox.Location.X / (GraphicalBoard.chessBoardSize / 8) + pictureBox.Location.Y / (GraphicalBoard.chessBoardSize / 8) * 8;
             //Console.WriteLine(place);
 
             if (playerColour == playerTurn)
@@ -145,7 +150,6 @@ namespace Chess
                     Pieces[] temboard = new Pieces[64];
                     Array.Copy(piecesOnBoard, temboard, temboard.Length);
                     move(fromToLocation);
-                    Console.WriteLine("d");
                     if (IsKingInCheck(piecesOnBoard, playerTurn))
                     {
                         Array.Copy(temboard, piecesOnBoard, temboard.Length);
@@ -166,6 +170,9 @@ namespace Chess
                                 Console.WriteLine("checkmate");
                             }
                             else { Console.WriteLine("stalemate"); }
+                            Console.WriteLine("end");
+                            main.NewGame();
+                            
                         }
                         //.............................
                     }

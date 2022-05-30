@@ -8,13 +8,24 @@ namespace Chess
 {
     public class Main
     {
-        public Graphics Graphics;
+        Graphics graphics;
+        History history;
+        Board board;
+        int num = 0;
         public Main(Form1 form)
         {
-            Graphics = new Graphics(form);
+            graphics = new Graphics(form);
             //creates the chess board class
-            History history = new History(3, Graphics);
-            Board board = new Board(history, Graphics);
+            history = new History(3, graphics);
+            board = new Board(history, graphics, this);
+        }
+        public void NewGame()
+        {
+            history = new History(3, graphics);
+            board = new Board(history, graphics, this);
+            Console.WriteLine(num);
+            num++;
+            NewGame();
         }
     }
 }
