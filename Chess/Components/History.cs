@@ -23,12 +23,13 @@ namespace Chess
         //on startup the graphics is made public and set
         //move number is set to 0(index for move history) and if its even its white turn
         //and the player is set, o is white, 1 is black, and 3 is both, 3 is defult at the moment
-        public History(int colourforPlayer, Graphics graphics1)
+        public History(int colourforPlayer, Graphics graphics1, Board board)
         {
             
             graphics = graphics1;
             MoveNumber = 0;
             playerColour = colourforPlayer;
+            board.History = this;
         }
 
         //this sees if any moves where made, and if not sends a blank board
@@ -44,7 +45,10 @@ namespace Chess
         public History(string PGN) { }
 
         //This logs the move in a given format in the move history[]
-        public void LogMove(int[] toFromLocation, Pieces movedPiece, Pieces[] oldBoard) { MoveNumber++; }
+        public void LogMove(int[] toFromLocation, Pieces movedPiece, Pieces[] oldBoard) 
+        { 
+            MoveNumber++;
+        }
 
         //this returns the pieces of the intial board, can be used for future things where you have to add moves from a intial situation
         Pieces[] resetBoard()

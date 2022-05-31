@@ -11,21 +11,15 @@ namespace Chess
         Graphics graphics;
         History history;
         Board board;
-        int num = 0;
         public Main(Form1 form)
         {
             graphics = new Graphics(form);
-            //creates the chess board class
-            history = new History(3, graphics);
-            board = new Board(history, graphics, this);
+            NewGame();
         }
         public void NewGame()
         {
-            history = new History(3, graphics);
-            board = new Board(history, graphics, this);
-            Console.WriteLine(num);
-            num++;
-            NewGame();
+            board = new Board(graphics, this);
+            history = new History(3, graphics, board);
         }
     }
 }

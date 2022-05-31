@@ -62,18 +62,7 @@ namespace Chess
                     pictureBox1.Margin = new Padding(0);
                     pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
                     pictureBox1.Location = new Point(x * chessBoardSize / 8, y * chessBoardSize / 8);
-
-                    if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
-                    {
-                        pictureBox1.BackColor = Color.LightBlue;
-                        pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8); ;
-
-                    }
-                    else
-                    {
-                        pictureBox1.BackColor = Color.LightCyan;
-                        pictureBox1.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
-                    }
+                    setBackSquareToOriginal(x, y);
                     pictureBox1.Click += new EventHandler(userClicked);
                     boardPanel.Controls.Add((pictureBox1));
 
@@ -139,6 +128,42 @@ namespace Chess
             else { colourChar = "b"; }
             string pieceDir = "../../assets/" + colourChar + piece.ID + ".png";
             return pieceDir;
+        }
+        private void setBackSquareToOriginal(int x, int y)
+        {
+            PictureBox pictureBox = ParentSquares[y * 8 + x];
+            if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
+            {
+                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = Color.DarkCyan; }
+                pictureBox.BackColor = Color.DarkCyan;
+                pictureBox.Size = new Size(chessBoardSize / 8, chessBoardSize / 8); ;
+
+            }
+            else
+            {
+                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = Color.LightCyan; }
+                pictureBox.BackColor = Color.LightCyan;
+                pictureBox.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
+            }
+        }
+        public void ResetColourOfBackSquares()
+        {
+            for(int x = 0; x < ParentSquares.Length; x++)
+            {
+                int[] xy = Board.CovertLocationToXY(x);
+                setBackSquareToOriginal((int)xy[0], (int)xy[1]);
+            }
+        }
+        public void ColourSquaresFromAvalibleMoves(bool[] moves)
+        {
+            for(int x = 0; x < moves.Length; x++)
+            {
+                if (moves[x])
+                {
+                    if (PiecesOnBoard[x] != null) { PiecesOnBoard[x].BackColor = Color.IndianRed; }
+                    ParentSquares[x].BackColor = Color.IndianRed;
+                }
+            }
         }
 
     }

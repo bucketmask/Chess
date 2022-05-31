@@ -21,20 +21,24 @@ namespace Chess
         bool[] avalibleMoves = new bool[64];
         //history can change, and it is used to get current board, to see if their is game, contains all information
         History history;
-        GraphicalBoard GraphicalBoard;
         Main main;
 
         //on startup, board is given a new history, and so it makes a new board graphics and draws the pieces.
-        public Board(History history1, Graphics graphics1, Main main1)
+        public Board(Graphics graphics1, Main main1)
         {
             main = main1;
             graphics = graphics1;
-            history = history1;
-            //on initialization reset graphicalBoard board
-            GraphicalBoard = graphics.GraphicalBoard;
             graphics.GraphicalBoard.CurrentBoard = this;
-            piecesOnBoard = history.GetCurrentBoard();
-            GraphicalBoard.DrawAllPiecesOnBoard(piecesOnBoard);
+        }
+
+        public History History
+        {
+            set 
+            { 
+                history = value;
+                piecesOnBoard = history.GetCurrentBoard();
+                if(graphics != null) { graphics.GraphicalBoard.DrawAllPiecesOnBoard(piecesOnBoard); }
+            }
         }
 
         //converts from arr index to a usable format(X,Y co-ordinates)
@@ -125,6 +129,51 @@ namespace Chess
             }
             return nextColourCanMove;
         }
+        private bool[] getAvalibleMoves(int location)
+        {
+
+            avalibleMoves = piecesOnBoard[location].AvalibleMoves(location, piecesOnBoard);
+            for(int j = 0; j < avalibleMoves.Length; j++)
+            {
+                if(avalibleMoves[j] == true)
+                {
+                    int[] fromToLocation = { location, j };
+                    if (isMoveLegal(fromToLocation) == false)
+                    {
+                        avalibleMoves[j] = false;
+                    }
+                }
+            }
+            return avalibleMoves;
+        }
+
+        private bool isMoveLegal(int[] fromToLocation)
+        {
+            //creats backup of board
+            Pieces[] originalBoard = new Pieces[64];
+            Array.Copy(piecesOnBoard, originalBoard, piecesOnBoard.Length);
+
+            //does move
+            move(fromToLocation);
+
+            //see if the YOUR king is in check 
+            if (IsKingInCheck(piecesOnBoard, piecesOnBoard[fromToLocation[1]].colour) == false)
+            {
+                Array.Copy(originalBoard, piecesOnBoard, piecesOnBoard.Length);
+                return true;
+            }
+            else
+            {
+                Array.Copy(originalBoard, piecesOnBoard, piecesOnBoard.Length);
+                return false;
+            }
+        }
+
+        private int nextColour(int currentColour)
+        {
+            if (currentColour == 0) { return 1; }
+            else { return 0; }
+        }
 
         //this is what happens when the user clicks on the board, gets sent the xylocation
         public void UserClicked(object sender, EventArgs e)
@@ -142,49 +191,41 @@ namespace Chess
                 if (selectedPiece == -1 && piecesOnBoard[location] != null && piecesOnBoard[location].colour == playerTurn)
                 {
                     selectedPiece = location;
-                    avalibleMoves = piecesOnBoard[location].AvalibleMoves(location, piecesOnBoard);
+                    avalibleMoves = getAvalibleMoves(location);
+                    graphics.GraphicalBoard.ColourSquaresFromAvalibleMoves(avalibleMoves);
                 }
                 else if (selectedPiece != -1 && avalibleMoves[location] == true)
                 {
-                    int[] fromToLocation = new int[] { selectedPiece, location };
-                    Pieces[] temboard = new Pieces[64];
-                    Array.Copy(piecesOnBoard, temboard, temboard.Length);
+                    //makes move
+                    int[] fromToLocation = { selectedPiece, location };
                     move(fromToLocation);
-                    if (IsKingInCheck(piecesOnBoard, playerTurn))
+                    history.LogMove(fromToLocation, piecesOnBoard[selectedPiece], piecesOnBoard);
+                    graphics.GraphicalBoard.ResetColourOfBackSquares();
+                    graphics.GraphicalBoard.MovePiece(fromToLocation);
+                    selectedPiece = -1;
+                    if (tick(playerColour) == false)
                     {
-                        Array.Copy(temboard, piecesOnBoard, temboard.Length);
-                    }
-                    else
-                    {
-                        //............
-                        history.LogMove(fromToLocation, piecesOnBoard[selectedPiece], piecesOnBoard);
-                        GraphicalBoard.MovePiece(fromToLocation);
-                        selectedPiece = -1;
-                        if (tick(playerColour) == false)
+                        if (IsKingInCheck(piecesOnBoard, nextColour(playerTurn)))
                         {
-                            int nextColour;
-                            if (playerTurn == 0) { nextColour = 1; }
-                            else { nextColour = 0; }
-                            if (IsKingInCheck(piecesOnBoard, nextColour))
-                            {
-                                Console.WriteLine("checkmate");
-                            }
-                            else { Console.WriteLine("stalemate"); }
-                            Console.WriteLine("end");
-                            main.NewGame();
-                            
+                            Console.WriteLine("checkmate");
                         }
-                        //.............................
+                        else { Console.WriteLine("stalemate"); }
+                        Console.WriteLine("end");
+                        main.NewGame();
                     }
+
                 }
                 else if (selectedPiece != -1 && avalibleMoves[location] == false && piecesOnBoard[location] != null && piecesOnBoard[location].colour == playerTurn)
                 {
                     selectedPiece = location;
-                    avalibleMoves = piecesOnBoard[location].AvalibleMoves(location, piecesOnBoard);
+                    avalibleMoves = getAvalibleMoves(location);
+                    graphics.GraphicalBoard.ResetColourOfBackSquares();
+                    graphics.GraphicalBoard.ColourSquaresFromAvalibleMoves(avalibleMoves);
                 }
                 else
                 {
                     selectedPiece = -1;
+                    graphics.GraphicalBoard.ResetColourOfBackSquares();
                 }
             }
             else { Console.WriteLine("notgo"); selectedPiece = -1; }
