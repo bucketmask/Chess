@@ -39,6 +39,7 @@ namespace Chess
                 piecesOnBoard = history.GetCurrentBoard();
                 if(graphics != null) { graphics.GraphicalBoard.DrawAllPiecesOnBoard(piecesOnBoard); }
             }
+            get { return history; }
         }
 
         //converts from arr index to a usable format(X,Y co-ordinates)
@@ -51,14 +52,59 @@ namespace Chess
         {
             int location = (xY[1] * 8) + xY[0];
             return location;
-        }
+        } 
 
         //this moves a piece both in the pieces[] and in the graphical realm
         void move(int[] fromToLocation)
         {
-            piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
-            piecesOnBoard[fromToLocation[0]] = null;
+            if (fromToLocation[1] == history.enpassantMoveSquareLocation[1] && piecesOnBoard[fromToLocation[0]].ID == "P" && history.enpassantMoveSquareLocation[0] == history.MoveNumber - 1)
+            {
+                piecesOnBoard[history.enpassantMoveSquareLocation[2]] = null;
+                piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
+                piecesOnBoard[fromToLocation[0]] = null;
+            }
+            else
+            {
+                piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
+                piecesOnBoard[fromToLocation[0]] = null;
+            }
 
+        }
+
+        public bool[] CanCastleQueenKingSide(int colour)
+        {
+            int[] colourRank = { 7, 0 };
+            int[] blankLocationsX = { 1, 2, 3, 5, 6 };
+            int[] pieceLocations = { 0, 4, 7 };
+            bool[] queenKingside = { true, true };
+            for(int i = 0; i < 5; i++)
+            {
+                int[] xy = { blankLocationsX[i], colourRank[colour] };
+                int location = ConvertXYToLocation(xy);
+                if (piecesOnBoard[location] != null && (piecesOnBoard[location].ID != "K" && piecesOnBoard[location].ID != "R"))
+                {
+                    if(i <= 2) { queenKingside[0] = false; }
+                    else { queenKingside[1] = false; }
+                }
+            }
+            for (int n = 0; n < 3; n++)
+            {
+                int[] xy = { pieceLocations[n], colourRank[colour] };
+                int location = ConvertXYToLocation(xy);
+
+                if (piecesOnBoard[location] == null || (piecesOnBoard[location].ID != "K" && piecesOnBoard[location].ID != "R") || piecesOnBoard[location].hasMoved == true)
+                {
+                    if(n == 0 || n == 1) { queenKingside[0] = false; }
+                    if(n == 2 || n == 1) { queenKingside[1] = false; }
+                }
+            }
+            //
+            for(int y = 0; y < queenKingside.Length; y++)
+            {
+                Console.WriteLine(queenKingside[y]);
+            }
+            //
+            return queenKingside;
         }
 
         bool IsKingInCheck(Pieces[] piecesOnBoard, int coloursKing)
@@ -77,6 +123,7 @@ namespace Chess
             }
 
             //then see if the king is in threat
+            //king
             for (int i = 0; i < piecesOnBoard.Length; i++)
             {
                 if (piecesOnBoard[i] != null && piecesOnBoard[i].colour != coloursKing && kingLocation != -1)
@@ -129,7 +176,7 @@ namespace Chess
             }
             return nextColourCanMove;
         }
-        private bool[] getAvalibleMoves(int location)
+        public bool[] GetAvalibleMoves(int location)
         {
 
             avalibleMoves = piecesOnBoard[location].AvalibleMoves(location, piecesOnBoard);
@@ -191,17 +238,25 @@ namespace Chess
                 if (selectedPiece == -1 && piecesOnBoard[location] != null && piecesOnBoard[location].colour == playerTurn)
                 {
                     selectedPiece = location;
-                    avalibleMoves = getAvalibleMoves(location);
+                    avalibleMoves = GetAvalibleMoves(location);
                     graphics.GraphicalBoard.ColourSquaresFromAvalibleMoves(avalibleMoves);
                 }
                 else if (selectedPiece != -1 && avalibleMoves[location] == true)
                 {
                     //makes move
                     int[] fromToLocation = { selectedPiece, location };
-                    move(fromToLocation);
+                    //
+                    CanCastleQueenKingSide(playerTurn);
+                    //
                     history.LogMove(fromToLocation, piecesOnBoard[selectedPiece], piecesOnBoard);
+                    move(fromToLocation);
+                    if (piecesOnBoard[fromToLocation[1]].ID == "K" || piecesOnBoard[fromToLocation[1]].ID == "R") { piecesOnBoard[fromToLocation[1]].hasMoved = true; }
                     graphics.GraphicalBoard.ResetColourOfBackSquares();
                     graphics.GraphicalBoard.MovePiece(fromToLocation);
+                    if (history.enpassantMoveSquareLocation[0] == history.MoveNumber - 2 && fromToLocation[1] == history.enpassantMoveSquareLocation[1] && piecesOnBoard[fromToLocation[1]].ID == "P")
+                    {
+                        graphics.GraphicalBoard.CheckBoard(piecesOnBoard);
+                    }
                     selectedPiece = -1;
                     if (tick(playerColour) == false)
                     {
@@ -218,7 +273,7 @@ namespace Chess
                 else if (selectedPiece != -1 && avalibleMoves[location] == false && piecesOnBoard[location] != null && piecesOnBoard[location].colour == playerTurn)
                 {
                     selectedPiece = location;
-                    avalibleMoves = getAvalibleMoves(location);
+                    avalibleMoves = GetAvalibleMoves(location);
                     graphics.GraphicalBoard.ResetColourOfBackSquares();
                     graphics.GraphicalBoard.ColourSquaresFromAvalibleMoves(avalibleMoves);
                 }

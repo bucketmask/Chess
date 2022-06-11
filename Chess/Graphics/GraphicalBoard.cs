@@ -108,6 +108,18 @@ namespace Chess
             PiecesOnBoard[fromToLocation[1]] = PiecesOnBoard[fromToLocation[0]];
             PiecesOnBoard[fromToLocation[0]] = null;
         }
+        public void CheckBoard(Pieces[] board)
+        {
+            for(int i = 0; i < board.Length; i++)
+            {
+                if (board[i] == null && PiecesOnBoard[i] != null)
+                {
+                    removePiece(i);
+                }
+            }
+        }
+
+
         public void removeAllPieces()
         {
             //removes all pieces
@@ -134,15 +146,15 @@ namespace Chess
             PictureBox pictureBox = ParentSquares[y * 8 + x];
             if ((x % 2 == 0 && y % 2 == 1) || (x % 2 == 1 && y % 2 == 0))
             {
-                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = Color.DarkCyan; }
-                pictureBox.BackColor = Color.DarkCyan;
+                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = ColorTranslator.FromHtml("#779455"); }
+                pictureBox.BackColor = ColorTranslator.FromHtml("#779455");
                 pictureBox.Size = new Size(chessBoardSize / 8, chessBoardSize / 8); ;
 
             }
             else
             {
-                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = Color.LightCyan; }
-                pictureBox.BackColor = Color.LightCyan;
+                if (PiecesOnBoard[y * 8 + x] != null) { PiecesOnBoard[y * 8 + x].BackColor = ColorTranslator.FromHtml("#ebebd0"); }
+                pictureBox.BackColor = ColorTranslator.FromHtml("#ebebd0");
                 pictureBox.Size = new Size(chessBoardSize / 8, chessBoardSize / 8);
             }
         }
@@ -156,12 +168,12 @@ namespace Chess
         }
         public void ColourSquaresFromAvalibleMoves(bool[] moves)
         {
-            for(int x = 0; x < moves.Length; x++)
+            for (int x = 0; x < moves.Length; x++)
             {
                 if (moves[x])
                 {
-                    if (PiecesOnBoard[x] != null) { PiecesOnBoard[x].BackColor = Color.IndianRed; }
-                    ParentSquares[x].BackColor = Color.IndianRed;
+                    if (PiecesOnBoard[x] != null) { PiecesOnBoard[x].BackColor = ColorTranslator.FromHtml("#963733"); }
+                    ParentSquares[x].BackColor = ColorTranslator.FromHtml("#963733");
                 }
             }
         }

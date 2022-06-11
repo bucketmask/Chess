@@ -15,9 +15,14 @@ namespace Chess
     {
         public int colour;
         public string ID;
-        public Pieces(int inputcolour)
+        public bool hasMoved;
+        public Board board;
+        public History history;
+        public Pieces(int inputcolour, Board board1)
         {
             colour = inputcolour;
+            board = board1;
+            history = board.History;
         }
 
         public bool[] FindMovesFromVariations(int currentLocation, Pieces[] boardpieces, int[] xVariations, int[] yVariations)
@@ -80,7 +85,7 @@ namespace Chess
     }
     public class Pawn : Pieces
     {
-        public Pawn(int inputcolour) : base(inputcolour) { ID = "P"; }
+        public Pawn(int inputcolour, Board board) : base(inputcolour, board) { ID = "P"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces)
         {
             bool[] moves = new bool[64];
@@ -105,13 +110,13 @@ namespace Chess
                         moves[location] = true;
                     }
                 }
-
             }
             return moves;
         }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
             bool[] moves = new bool[64];
+            bool pieceInWay = false;
             int[] xY = Board.CovertLocationToXY(currentLocation);
             int location;
             int[] file = new int[] { 6, 1 };
@@ -136,11 +141,12 @@ namespace Chess
                         {
                             moves[location] = true;
                         }
-                        else if (xY[1] == file[colour])
+                        else if (xY[1] == file[colour] && pieceInWay == false)
                         {
                             moves[location] = true;
                         }
                     }
+                    else { pieceInWay = true; }
                 }
                 move[1] = xY[1] + 1 * direction;
                 move[0] = xY[0] + xVariations[i - 1];
@@ -148,6 +154,10 @@ namespace Chess
                 {
                     location = Board.ConvertXYToLocation(move);
                     if (boardpieces[location] != null && boardpieces[location].colour != this.colour)
+                    {
+                        moves[location] = true;
+                    }
+                    if (history.enpassantMoveSquareLocation[1] == location && history.enpassantMoveSquareLocation[0] == history.MoveNumber - 1)
                     {
                         moves[location] = true;
                     }
@@ -159,7 +169,7 @@ namespace Chess
     }
     public class King : Pieces
     {
-        public King(int inputcolour) : base(inputcolour) { ID = "K"; }
+        public King(int inputcolour, Board board) : base(inputcolour, board) { ID = "K"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
@@ -171,7 +181,7 @@ namespace Chess
     }
     public class Rook : Pieces
     {
-        public Rook(int inputcolour) : base(inputcolour) { ID = "R"; }
+        public Rook(int inputcolour, Board board) : base(inputcolour, board) { ID = "R"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
@@ -184,7 +194,7 @@ namespace Chess
     }
     public class Knight : Pieces
     {
-        public Knight(int inputcolour) : base(inputcolour) { ID = "N"; }
+        public Knight(int inputcolour, Board board) : base(inputcolour, board) { ID = "N"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
@@ -196,7 +206,7 @@ namespace Chess
     }
     public class Bishop : Pieces
     {
-        public Bishop(int inputcolour) : base(inputcolour) { ID = "B"; }
+        public Bishop(int inputcolour, Board board) : base(inputcolour, board) { ID = "B"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
@@ -210,7 +220,7 @@ namespace Chess
     }
     public class Queen : Pieces
     {
-        public Queen(int inputcolour) : base(inputcolour) { ID = "Q"; }
+        public Queen(int inputcolour, Board board) : base(inputcolour, board) { ID = "Q"; }
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
         public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
         {
