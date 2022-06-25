@@ -28,7 +28,7 @@ namespace Chess
         public bool[] FindMovesFromVariations(int currentLocation, Pieces[] boardpieces, int[] xVariations, int[] yVariations)
         {
             bool[] moves = new bool[64];
-            int[] xY = Board.CovertLocationToXY(currentLocation);
+            int[] xY = Board.ConvertLocationToXY(currentLocation);
             int[] move = new int[2];
 
             for (int i = 0; i < xVariations.Length; i++)
@@ -49,7 +49,7 @@ namespace Chess
         public bool[] FindMovesStraightLinesVariations(int currentLocation, Pieces[] boardpieces, int[] xVariations, int[] yVariations)
         {
             bool[] moves = new bool[64];
-            int[] xY = Board.CovertLocationToXY(currentLocation);
+            int[] xY = Board.ConvertLocationToXY(currentLocation);
             int[] move = new int[2];
 
 
@@ -89,7 +89,7 @@ namespace Chess
         public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces)
         {
             bool[] moves = new bool[64];
-            int[] xY = Board.CovertLocationToXY(currentLocation);
+            int[] xY = Board.ConvertLocationToXY(currentLocation);
             int location;
             int[] xVariations = new int[] { -1, 1 };
             int[] move = new int[] { xY[0], xY[1] };
@@ -117,7 +117,7 @@ namespace Chess
         {
             bool[] moves = new bool[64];
             bool pieceInWay = false;
-            int[] xY = Board.CovertLocationToXY(currentLocation);
+            int[] xY = Board.ConvertLocationToXY(currentLocation);
             int location;
             int[] file = new int[] { 6, 1 };
             int[] xVariations = new int[] { -1, 1 };
@@ -170,12 +170,31 @@ namespace Chess
     public class King : Pieces
     {
         public King(int inputcolour, Board board) : base(inputcolour, board) { ID = "K"; }
-        public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) { return AvalibleMoves(currentLocation, boardpieces); }
-        public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
+        public override bool[] ThreatMap(int currentLocation, Pieces[] boardpieces) 
         {
             int[] xVariations = new int[] { -1, 0, 1, -1, 1, -1, 0, 1 };
             int[] yVariations = new int[] { 1, 1, 1, 0, 0, -1, -1, -1 };
             bool[] moves = FindMovesFromVariations(currentLocation, boardpieces, xVariations, yVariations);
+            return moves; 
+        }
+        public override bool[] AvalibleMoves(int currentLocation, Pieces[] boardpieces)
+        {
+            int[] castlingLocationQK = { 2, 6 };
+            int[] xy = Board.ConvertLocationToXY(currentLocation);
+            bool[] moves = this.ThreatMap(currentLocation, boardpieces);
+            bool[] castleQK = board.CanCastleQueenKingSide(colour);
+
+            for(int i = 0; i < 2; i++)
+            {
+                if (castleQK[i])
+                {
+                    xy[0] = castlingLocationQK[i];
+                    moves[Board.ConvertXYToLocation(xy)] = true;
+
+                }
+            }
+
+
             return moves;
         }
     }

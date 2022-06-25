@@ -16,7 +16,7 @@ namespace Chess
         //const string startingFen = "nbqrkrbn/pppppppp/8/8/8/8/PPPPPPPP/NBQRKRBN";
         //Each pointer?? is a halfmove
         //so even is white, odd is black moves
-        string[] moveHistory = new string[512];
+        List<string> moveHistory = new List<string>();
         public int[] enpassantMoveSquareLocation = new int[3];
         public int MoveNumber;
         public int playerColour;
@@ -39,7 +39,7 @@ namespace Chess
         //TODO needs work far future
         public Pieces[] GetCurrentBoard()
         {
-            if (moveHistory[0] == null) { return resetBoard(); }
+            if (moveHistory.Count == 0) { return resetBoard(); }
             else { return resetBoard(); }
         }
 
@@ -52,7 +52,7 @@ namespace Chess
         {
             string output = "";
             string movedPieceRankFile = convertLocationToRanksFiles(fromToLocation[0]);
-            int[] fromxy = Board.CovertLocationToXY(fromToLocation[0]);
+            int[] fromxy = Board.ConvertLocationToXY(fromToLocation[0]);
             bool[] samexy = { false, false };
             if (movedPiece.ID != "P")
             {
@@ -103,7 +103,14 @@ namespace Chess
             output = output + convertLocationToRanksFiles(fromToLocation[1]);
 
 
-            moveHistory[MoveNumber] = output;
+            moveHistory.Add(output);
+            if (graphics != null) { graphics.GraphicalHistory.AddItem(MoveNumber, output); }
+            MoveNumber++;
+        }
+        public void LogMove(string output)
+        {
+            moveHistory.Add(output);
+            if (graphics != null) { graphics.GraphicalHistory.AddItem(MoveNumber, output); }
             MoveNumber++;
         }
 
@@ -111,7 +118,7 @@ namespace Chess
         {
             char[] files = { 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a', };
             location = 63 - location;
-            int[] xy = Board.CovertLocationToXY(location);
+            int[] xy = Board.ConvertLocationToXY(location);
             string rank = (xy[1] + 1).ToString();
             string file = files[xy[0]].ToString();
             return file + rank;

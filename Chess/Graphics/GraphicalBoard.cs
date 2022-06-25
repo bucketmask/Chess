@@ -31,7 +31,7 @@ namespace Chess
             createBackSquares();
             //panle for chess background
             Panel backPanel = new Panel();
-            backPanel.Location = new Point(10, 10);
+            backPanel.Location = new Point(10, 30);
             //has to be a multiple of 8
             backPanel.Size = new Size(borderSize + chessBoardSize, borderSize + chessBoardSize);
             backPanel.Margin = new Padding(0);
@@ -82,7 +82,7 @@ namespace Chess
         public void DrawSinglePieceOnBoard(int location, Pieces piece)
         {
             string piecesDir = getPieceDir(piece);
-            int[] xY = Board.CovertLocationToXY(location);
+            int[] xY = Board.ConvertLocationToXY(location);
             PictureBox pictureBox = new PictureBox();
             pictureBox.Image = Image.FromFile(piecesDir);
             pictureBox.Padding = new Padding(0, 0, 0, 0);
@@ -101,22 +101,12 @@ namespace Chess
             if (PiecesOnBoard[fromToLocation[1]] != null)
             {
                 //Refer to the board to remove piece(scoring etc)
-                removePiece(fromToLocation[1]);
+                RemovePiece(fromToLocation[1]);
             }
             PiecesOnBoard[fromToLocation[0]].BackColor = ParentSquares[fromToLocation[1]].BackColor;
             PiecesOnBoard[fromToLocation[0]].Location = new Point(fromToLocation[1] % 8 * boardPanel.Size.Width / 8, fromToLocation[1] / 8 * boardPanel.Size.Width / 8);
             PiecesOnBoard[fromToLocation[1]] = PiecesOnBoard[fromToLocation[0]];
             PiecesOnBoard[fromToLocation[0]] = null;
-        }
-        public void CheckBoard(Pieces[] board)
-        {
-            for(int i = 0; i < board.Length; i++)
-            {
-                if (board[i] == null && PiecesOnBoard[i] != null)
-                {
-                    removePiece(i);
-                }
-            }
         }
 
 
@@ -125,10 +115,10 @@ namespace Chess
             //removes all pieces
             for(int i = 0; i < PiecesOnBoard.Length; i++)
             {
-                removePiece(i);
+                RemovePiece(i);
             }
         }
-        private void removePiece(int location)
+        public void RemovePiece(int location)
         {
             //removes the picture box of a piece from graphical board
             if (PiecesOnBoard[location] != null) { boardPanel.Controls.Remove(PiecesOnBoard[location]); }
@@ -162,7 +152,7 @@ namespace Chess
         {
             for(int x = 0; x < ParentSquares.Length; x++)
             {
-                int[] xy = Board.CovertLocationToXY(x);
+                int[] xy = Board.ConvertLocationToXY(x);
                 setBackSquareToOriginal((int)xy[0], (int)xy[1]);
             }
         }
@@ -177,6 +167,7 @@ namespace Chess
                 }
             }
         }
+
 
     }
 }

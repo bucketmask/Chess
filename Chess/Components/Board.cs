@@ -43,7 +43,7 @@ namespace Chess
         }
 
         //converts from arr index to a usable format(X,Y co-ordinates)
-        public static int[] CovertLocationToXY(int location)
+        public static int[] ConvertLocationToXY(int location)
         {
             int[] xY = new int[2] { location % 8, location / 8 };
             return xY;
@@ -52,22 +52,101 @@ namespace Chess
         {
             int location = (xY[1] * 8) + xY[0];
             return location;
-        } 
+        }
 
         //this moves a piece both in the pieces[] and in the graphical realm
-        void move(int[] fromToLocation)
+        void move(int[] fromToLocation, bool isMain)
         {
+            Pieces[] oldBoard = new Pieces[64];
+            Array.Copy(piecesOnBoard, oldBoard, piecesOnBoard.Length);
+            //enpassant :D
             if (fromToLocation[1] == history.enpassantMoveSquareLocation[1] && piecesOnBoard[fromToLocation[0]].ID == "P" && history.enpassantMoveSquareLocation[0] == history.MoveNumber - 1)
             {
                 piecesOnBoard[history.enpassantMoveSquareLocation[2]] = null;
                 piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
                 piecesOnBoard[fromToLocation[0]] = null;
+                if (isMain)
+                {
+                    if (graphics != null)
+                    {
+                        graphics.GraphicalBoard.MovePiece(fromToLocation);
+                        graphics.GraphicalBoard.RemovePiece(history.enpassantMoveSquareLocation[2]);
+                    }
+                    history.LogMove(fromToLocation, oldBoard[selectedPiece], oldBoard);
+                }
+                return;
             }
-            else
+            //Castiling :P check already done
+            else if (piecesOnBoard[fromToLocation[0]].ID == "K" && (Math.Abs(ConvertLocationToXY(fromToLocation[0])[0] - ConvertLocationToXY(fromToLocation[1])[0]) > 1))
             {
+                string output;
+                int[] rookToFromX;
+                int[] rookFromToLocations = new int[2];
+                if ((fromToLocation[0] - fromToLocation[1]) > 1)
+                {
+                    rookToFromX = new int[2] { 0, 3 };
+                    output = "0-0-0";
+                }
+                else
+                {
+                    rookToFromX = new int[2] { 7, 5 };
+                    output = "0-0";
+                }
+
+                int y = ConvertLocationToXY(fromToLocation[0])[1];
+                rookFromToLocations[0] = ConvertXYToLocation(new int[2] { rookToFromX[0], y });
+                rookFromToLocations[1] = ConvertXYToLocation(new int[2] { rookToFromX[1], y });
+
+                piecesOnBoard[rookFromToLocations[1]] = piecesOnBoard[rookFromToLocations[0]];
+                piecesOnBoard[rookFromToLocations[0]] = null;
                 piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
                 piecesOnBoard[fromToLocation[0]] = null;
+                if (isMain)
+                {
+                    if(graphics != null)
+                    {
+                        graphics.GraphicalBoard.MovePiece(fromToLocation);
+                        graphics.GraphicalBoard.MovePiece(rookFromToLocations);
+                    }
+                    history.LogMove(output);
+                }
+                return;
             }
+
+            else if(piecesOnBoard[fromToLocation[0]].ID == "P")
+            {
+                int y = ConvertLocationToXY(fromToLocation[1])[1];
+                if (y == 0 || y == 7)
+                {
+                    Queen newPiece = new Queen(piecesOnBoard[fromToLocation[0]].colour, this);
+                    piecesOnBoard[fromToLocation[1]] = newPiece;
+                    piecesOnBoard[fromToLocation[0]] = null;
+                    if (isMain)
+                    {
+                        if(graphics != null) 
+                        {
+                            graphics.GraphicalBoard.RemovePiece(fromToLocation[1]);
+                            graphics.GraphicalBoard.DrawSinglePieceOnBoard(fromToLocation[1], newPiece); 
+                            graphics.GraphicalBoard.RemovePiece(fromToLocation[0]);
+                        }
+                        history.LogMove(fromToLocation, oldBoard[selectedPiece], oldBoard);
+                    }
+
+                    return;
+                }
+            }
+
+
+
+            piecesOnBoard[fromToLocation[1]] = piecesOnBoard[fromToLocation[0]];
+            piecesOnBoard[fromToLocation[0]] = null;
+            if (isMain) 
+            {
+                if(graphics!= null) { graphics.GraphicalBoard.MovePiece(fromToLocation); }
+                if (piecesOnBoard[fromToLocation[1]].ID == "K" || piecesOnBoard[fromToLocation[1]].ID == "R") { piecesOnBoard[fromToLocation[1]].hasMoved = true; }
+                history.LogMove(fromToLocation, oldBoard[selectedPiece], oldBoard);
+            }
+            
 
         }
 
@@ -162,7 +241,7 @@ namespace Chess
                             Array.Copy(piecesOnBoard, originalBoard, piecesOnBoard.Length);
 
                             int[] toFromLocation = new int[2] { i, j };
-                            move(toFromLocation);
+                            move(toFromLocation, false);
                             if (IsKingInCheck(piecesOnBoard, nextColour) == false)
                             {
                                 nextColourCanMove = true;
@@ -201,7 +280,7 @@ namespace Chess
             Array.Copy(piecesOnBoard, originalBoard, piecesOnBoard.Length);
 
             //does move
-            move(fromToLocation);
+            move(fromToLocation, false);
 
             //see if the YOUR king is in check 
             if (IsKingInCheck(piecesOnBoard, piecesOnBoard[fromToLocation[1]].colour) == false)
@@ -245,18 +324,8 @@ namespace Chess
                 {
                     //makes move
                     int[] fromToLocation = { selectedPiece, location };
-                    //
-                    CanCastleQueenKingSide(playerTurn);
-                    //
-                    history.LogMove(fromToLocation, piecesOnBoard[selectedPiece], piecesOnBoard);
-                    move(fromToLocation);
-                    if (piecesOnBoard[fromToLocation[1]].ID == "K" || piecesOnBoard[fromToLocation[1]].ID == "R") { piecesOnBoard[fromToLocation[1]].hasMoved = true; }
+                    move(fromToLocation, true);
                     graphics.GraphicalBoard.ResetColourOfBackSquares();
-                    graphics.GraphicalBoard.MovePiece(fromToLocation);
-                    if (history.enpassantMoveSquareLocation[0] == history.MoveNumber - 2 && fromToLocation[1] == history.enpassantMoveSquareLocation[1] && piecesOnBoard[fromToLocation[1]].ID == "P")
-                    {
-                        graphics.GraphicalBoard.CheckBoard(piecesOnBoard);
-                    }
                     selectedPiece = -1;
                     if (tick(playerColour) == false)
                     {

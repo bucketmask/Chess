@@ -14,6 +14,8 @@ namespace Chess
     {
         public Form graphicsForm;
         public GraphicalBoard GraphicalBoard;
+        public GraphicalHistory GraphicalHistory;
+        public GraphicalNavBar GraphicalNavBar;
         public Graphics(Form1 form)
         {
             this.graphicsForm = form;
@@ -28,7 +30,9 @@ namespace Chess
             graphicsForm.ResumeLayout(false);
 
             //intilizes Graphical components in the graphics object, Gateway
+            GraphicalNavBar = new GraphicalNavBar(this);
             GraphicalBoard = new GraphicalBoard(this);
+            GraphicalHistory = new GraphicalHistory(this);
 
         }
 

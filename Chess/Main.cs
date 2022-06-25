@@ -20,6 +20,8 @@ namespace Chess
         {
             board = new Board(graphics, this);
             history = new History(3, graphics, board);
+            //NewGame();
+    
         }
     }
 }
