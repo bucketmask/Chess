@@ -115,23 +115,22 @@ namespace Chess
 
             else if(piecesOnBoard[fromToLocation[0]].ID == "P")
             {
-                int y = ConvertLocationToXY(fromToLocation[1])[1];
-                if (y == 0 || y == 7)
+                int[] xy = ConvertLocationToXY(fromToLocation[1]);
+                if (xy[1] == 0 || xy[1] == 7)
                 {
-                    Queen newPiece = new Queen(piecesOnBoard[fromToLocation[0]].colour, this);
-                    piecesOnBoard[fromToLocation[1]] = newPiece;
-                    piecesOnBoard[fromToLocation[0]] = null;
                     if (isMain)
                     {
                         if(graphics != null) 
                         {
-                            graphics.GraphicalBoard.RemovePiece(fromToLocation[1]);
-                            graphics.GraphicalBoard.DrawSinglePieceOnBoard(fromToLocation[1], newPiece); 
-                            graphics.GraphicalBoard.RemovePiece(fromToLocation[0]);
+                            graphics.GraphicalBoard.Promotion.Show(fromToLocation, piecesOnBoard[fromToLocation[0]].colour ,this) ;
                         }
-                        history.LogMove(fromToLocation, oldBoard[selectedPiece], oldBoard);
                     }
-
+                    else
+                    {
+                        Queen newPiece = new Queen(piecesOnBoard[fromToLocation[0]].colour, this);
+                        piecesOnBoard[fromToLocation[1]] = newPiece;
+                        piecesOnBoard[fromToLocation[0]] = null;
+                    }
                     return;
                 }
             }
@@ -147,6 +146,18 @@ namespace Chess
                 history.LogMove(fromToLocation, oldBoard[selectedPiece], oldBoard);
             }
             
+
+        }
+
+        public void PromotionMove(string id, int[] fromToLocation)
+        {
+            Pieces newPiece = history.GetPiece(id[0], piecesOnBoard[fromToLocation[0]].colour);
+            history.LogMove(fromToLocation, newPiece, piecesOnBoard);
+            piecesOnBoard[fromToLocation[1]] = newPiece;
+            piecesOnBoard[fromToLocation[0]] = null;
+            graphics.GraphicalBoard.RemovePiece(fromToLocation[0]);
+            graphics.GraphicalBoard.RemovePiece(fromToLocation[1]);
+            graphics.GraphicalBoard.DrawSinglePieceOnBoard(fromToLocation[1], newPiece);
 
         }
 

@@ -12,20 +12,24 @@ namespace Chess
     {
         public static int chessBoardSize = 480;
         static int borderSize = 20;
-        Panel boardPanel;
+        public Panel BoardPanel;
+        public GraphicalPromotion Promotion;
+        Graphics graphics;
         PictureBox[] ParentSquares = new PictureBox[64];
         PictureBox[] PiecesOnBoard = new PictureBox[64];
         Board currentBoard;
         public GraphicalBoard(Graphics parentGraphics)
         {
+            graphics = parentGraphics;
+            Promotion = new GraphicalPromotion(this);
             //panel for chess board
-            boardPanel = new Panel();
-            boardPanel.Location = new Point(10, 10);
+            BoardPanel = new Panel();
+            BoardPanel.Location = new Point(10, 10);
             //has to be a multiple of 8
-            boardPanel.Size = new Size(chessBoardSize, chessBoardSize);
-            boardPanel.Margin = new Padding(0);
-            boardPanel.Padding = new Padding(0);
-            boardPanel.BackColor = Color.Blue;
+            BoardPanel.Size = new Size(chessBoardSize, chessBoardSize);
+            BoardPanel.Margin = new Padding(0);
+            BoardPanel.Padding = new Padding(0);
+            BoardPanel.BackColor = Color.Blue;
 
             //creates squares
             createBackSquares();
@@ -39,7 +43,7 @@ namespace Chess
             backPanel.BackColor = Color.Black;
 
             parentGraphics.graphicsForm.Controls.Add(backPanel);
-            backPanel.Controls.Add(boardPanel);
+            backPanel.Controls.Add(BoardPanel);
         }
 
         public Board CurrentBoard
@@ -48,6 +52,8 @@ namespace Chess
         }
         private void userClicked(object sender, EventArgs e)
         {
+            Promotion.Hide();
+            graphics.UserClicked(sender, e);
             if (currentBoard != null) { currentBoard.UserClicked(sender, e); }
         }
         private void createBackSquares()
@@ -64,7 +70,7 @@ namespace Chess
                     pictureBox1.Location = new Point(x * chessBoardSize / 8, y * chessBoardSize / 8);
                     setBackSquareToOriginal(x, y);
                     pictureBox1.Click += new EventHandler(userClicked);
-                    boardPanel.Controls.Add((pictureBox1));
+                    BoardPanel.Controls.Add((pictureBox1));
 
                 }
             }
@@ -81,7 +87,7 @@ namespace Chess
         }
         public void DrawSinglePieceOnBoard(int location, Pieces piece)
         {
-            string piecesDir = getPieceDir(piece);
+            string piecesDir = getPieceDir(piece.colour, piece.ID);
             int[] xY = Board.ConvertLocationToXY(location);
             PictureBox pictureBox = new PictureBox();
             pictureBox.Image = Image.FromFile(piecesDir);
@@ -93,7 +99,7 @@ namespace Chess
             pictureBox.BackColor = ParentSquares[location].BackColor;
             pictureBox.Click += new EventHandler(userClicked);
             PiecesOnBoard[location] = pictureBox;
-            boardPanel.Controls.Add(pictureBox);
+            BoardPanel.Controls.Add(pictureBox);
             pictureBox.BringToFront();
         }
         public void MovePiece(int[] fromToLocation)
@@ -104,7 +110,7 @@ namespace Chess
                 RemovePiece(fromToLocation[1]);
             }
             PiecesOnBoard[fromToLocation[0]].BackColor = ParentSquares[fromToLocation[1]].BackColor;
-            PiecesOnBoard[fromToLocation[0]].Location = new Point(fromToLocation[1] % 8 * boardPanel.Size.Width / 8, fromToLocation[1] / 8 * boardPanel.Size.Width / 8);
+            PiecesOnBoard[fromToLocation[0]].Location = new Point(fromToLocation[1] % 8 * BoardPanel.Size.Width / 8, fromToLocation[1] / 8 * BoardPanel.Size.Width / 8);
             PiecesOnBoard[fromToLocation[1]] = PiecesOnBoard[fromToLocation[0]];
             PiecesOnBoard[fromToLocation[0]] = null;
         }
@@ -121,14 +127,14 @@ namespace Chess
         public void RemovePiece(int location)
         {
             //removes the picture box of a piece from graphical board
-            if (PiecesOnBoard[location] != null) { boardPanel.Controls.Remove(PiecesOnBoard[location]); }
+            if (PiecesOnBoard[location] != null) { BoardPanel.Controls.Remove(PiecesOnBoard[location]); }
         }
-        private string getPieceDir(Pieces piece)
+        public string getPieceDir(int colour, string ID)
         {
             string colourChar;
-            if (piece.colour == 0) { colourChar = "w"; }
+            if (colour == 0) { colourChar = "w"; }
             else { colourChar = "b"; }
-            string pieceDir = "../../assets/" + colourChar + piece.ID + ".png";
+            string pieceDir = "../../assets/" + colourChar + ID + ".png";
             return pieceDir;
         }
         private void setBackSquareToOriginal(int x, int y)

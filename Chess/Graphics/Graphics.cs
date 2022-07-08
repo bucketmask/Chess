@@ -16,7 +16,9 @@ namespace Chess
         public GraphicalBoard GraphicalBoard;
         public GraphicalHistory GraphicalHistory;
         public GraphicalNavBar GraphicalNavBar;
-        public Graphics(Form1 form)
+        public GraphicalServerConnect GraphicalServerConnect;
+        public GraphicalImport GraphicalImport;
+        public Graphics(Form1 form, Main main)
         {
             this.graphicsForm = form;
             //form
@@ -28,12 +30,31 @@ namespace Chess
             graphicsForm.Name = "Chess";
             graphicsForm.Text = "Chess";
             graphicsForm.ResumeLayout(false);
+            graphicsForm.Click += new EventHandler(UserClicked);
 
             //intilizes Graphical components in the graphics object, Gateway
             GraphicalNavBar = new GraphicalNavBar(this);
+            GraphicalImport = new GraphicalImport(this, main);
+            GraphicalServerConnect = new GraphicalServerConnect(this, main);
             GraphicalBoard = new GraphicalBoard(this);
             GraphicalHistory = new GraphicalHistory(this);
 
+            TextBox tb = new TextBox();
+            graphicsForm.Controls.Add(tb);
+            tb.KeyPress += new KeyPressEventHandler(KeyDown);
+
+
+            graphicsForm.KeyPress += new KeyPressEventHandler(KeyDown);
+        }
+        public void UserClicked(object sender, EventArgs e)
+        {
+            //hides all other components when click off
+            GraphicalImport.hide();
+            GraphicalServerConnect.hide();
+        }
+        private void KeyDown(object sender, EventArgs e)
+        {
+            Console.WriteLine("sad");
         }
 
     }

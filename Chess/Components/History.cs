@@ -12,11 +12,11 @@ namespace Chess
     {
         //needs graphics component
         Graphics graphics;
-        const string startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        const string startingFen = "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR";
         //const string startingFen = "nbqrkrbn/pppppppp/8/8/8/8/PPPPPPPP/NBQRKRBN";
         //Each pointer?? is a halfmove
         //so even is white, odd is black moves
-        List<string> moveHistory = new List<string>();
+        List<string> DisplayHistory = new List<string>();
         public int[] enpassantMoveSquareLocation = new int[3];
         public int MoveNumber;
         public int playerColour;
@@ -39,7 +39,7 @@ namespace Chess
         //TODO needs work far future
         public Pieces[] GetCurrentBoard()
         {
-            if (moveHistory.Count == 0) { return resetBoard(); }
+            if (DisplayHistory.Count == 0) { return resetBoard(); }
             else { return resetBoard(); }
         }
 
@@ -54,9 +54,9 @@ namespace Chess
             string movedPieceRankFile = convertLocationToRanksFiles(fromToLocation[0]);
             int[] fromxy = Board.ConvertLocationToXY(fromToLocation[0]);
             bool[] samexy = { false, false };
-            if (movedPiece.ID != "P")
+            if (oldBoard[fromToLocation[0]].ID != "P")
             {
-                output = output + movedPiece.ID;
+                output = output + oldBoard[fromToLocation[0]].ID;
             }
             else if (Math.Abs(fromToLocation[0] - fromToLocation[1]) == 16)
             {
@@ -78,7 +78,7 @@ namespace Chess
                 int y = (8 * i) + fromxy[0];
                 if (oldBoard[x] != null && x != fromToLocation[0])
                 {
-                    if ((oldBoard[x].ID == movedPiece.ID) && (oldBoard[x].colour == movedPiece.colour))
+                    if ((oldBoard[x].ID == oldBoard[fromToLocation[0]].ID) && (oldBoard[x].colour == oldBoard[fromToLocation[0]].colour))
                     {
                         if (oldBoard[x].AvalibleMoves(x, oldBoard)[fromToLocation[1]] == true)
                         {
@@ -88,7 +88,7 @@ namespace Chess
                 }
                 if (oldBoard[y] != null && y != fromToLocation[0])
                 {
-                    if ((oldBoard[y].ID == movedPiece.ID) && (oldBoard[y].colour == movedPiece.colour))
+                    if ((oldBoard[y].ID == oldBoard[fromToLocation[0]].ID) && (oldBoard[y].colour == movedPiece.colour))
                     {
                         if (oldBoard[y].AvalibleMoves(y, oldBoard)[fromToLocation[1]] == true)
                         {
@@ -99,17 +99,25 @@ namespace Chess
             }
             if (samexy[0]) { output = output + movedPieceRankFile[0]; }
             if (samexy[1]) { output = output + movedPieceRankFile[1]; }
-            if (oldBoard[fromToLocation[1]] != null) { output = output + 'x'; }
+            if (oldBoard[fromToLocation[1]] != null) 
+            { 
+                if(output.Length < 1) { output = convertLocationToRanksFiles(fromToLocation[0])[0].ToString(); }
+                output = output + 'x'; 
+            }
             output = output + convertLocationToRanksFiles(fromToLocation[1]);
+            if (oldBoard[fromToLocation[0]] != movedPiece)
+            {
+                output = output + "=" + movedPiece.ID;
+            }
 
 
-            moveHistory.Add(output);
+            DisplayHistory.Add(output);
             if (graphics != null) { graphics.GraphicalHistory.AddItem(MoveNumber, output); }
             MoveNumber++;
         }
         public void LogMove(string output)
         {
-            moveHistory.Add(output);
+            DisplayHistory.Add(output);
             if (graphics != null) { graphics.GraphicalHistory.AddItem(MoveNumber, output); }
             MoveNumber++;
         }
@@ -139,42 +147,45 @@ namespace Chess
                     {
                         Pointer += number - 1;
                     }
-                    if (fenSplit[i][j].ToString().ToLower() == "p")
+                    else
                     {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new Pawn(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new Pawn(0, board); }
-
-                    }
-
-                    else if (fenSplit[i][j].ToString().ToLower() == "r")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new Rook(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new Rook(0, board); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "b")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new Bishop(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new Bishop(0, board); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "n")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new Knight(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new Knight(0, board); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "k")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new King(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new King(0, board); }
-                    }
-                    else if (fenSplit[i][j].ToString().ToLower() == "q")
-                    {
-                        if (char.IsLower(fenSplit[i][j])) { boardpieces[Pointer] = new Queen(1, board); }
-                        else if (char.IsUpper(fenSplit[i][j])) { boardpieces[Pointer] = new Queen(0, board); }
+                        if (char.IsLower(fenSplit[i][j])) boardpieces[Pointer] = GetPiece(fenSplit[i][j], 1);
+                        else boardpieces[Pointer] = GetPiece(fenSplit[i][j], 0); 
                     }
                     Pointer++;
                 }
             }
             return boardpieces;
+        }
+        public Pieces GetPiece(char id, int colour)
+        {
+            id = char.ToLower(id);
+            Pieces piece = null;
+            if (id == 'p')
+            {
+                piece = new Pawn(colour, board);
+            }
+            else if (id == 'r')
+            {
+                piece = new Rook(colour, board);
+            }
+            else if (id == 'b')
+            {
+                piece = new Bishop(colour, board);
+            }
+            else if (id == 'n')
+            {
+                piece = new Knight(colour, board);
+            }
+            else if (id == 'k')
+            {
+                piece = new King(colour, board);
+            }
+            else if (id == 'q')
+            {
+                piece = new Queen(colour, board);
+            }
+            return piece;
         }
     }
 }

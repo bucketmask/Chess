@@ -41,7 +41,6 @@ namespace Chess
             table.Columns.Add("Move", tableSize / 5, HorizontalAlignment.Center);
             table.Columns.Add("White", columLength, HorizontalAlignment.Center);
             table.Columns.Add("Black", columLength, HorizontalAlignment.Center);
-
             graphics.graphicsForm.Controls.Add(table);
         }
 
@@ -62,5 +61,9 @@ namespace Chess
             newItem.SubItems.Add(move);
         }
 
+        public void KeyDown(object sender, KeyEventArgs e)
+        {
+            Console.WriteLine("preess");
+        }
     }
 }

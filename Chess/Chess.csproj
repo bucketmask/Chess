@@ -82,9 +82,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Board.cs" />
+    <Compile Include="Components\TCPclient.cs" />
     <Compile Include="Graphics\GraphicalHistory.cs" />
     <Compile Include="Graphics\GraphicalBoard.cs" />
+    <Compile Include="Graphics\GraphicalImport.cs" />
     <Compile Include="Graphics\GraphicalNavBar.cs" />
+    <Compile Include="Graphics\GraphicalPromotion.cs" />
+    <Compile Include="Graphics\GraphicalServerConnect.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Graphics\Graphics.cs" />
     <Compile Include="Components\History.cs" />

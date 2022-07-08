@@ -11,9 +11,11 @@ namespace Chess
         Graphics graphics;
         History history;
         Board board;
+        public TCPclient client;
         public Main(Form1 form)
         {
-            graphics = new Graphics(form);
+            client = new TCPclient();
+            graphics = new Graphics(form, this);
             NewGame();
         }
         public void NewGame()

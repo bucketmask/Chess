@@ -26,8 +26,13 @@ namespace Chess
             backPanel.Padding = new Padding(0);
             backPanel.BackColor = Color.Gray;
 
+            ToolStripMenuItem importButton = new ToolStripMenuItem();
+            importButton.Text = "Import";
+            importButton.TextAlign = ContentAlignment.BottomRight;
+            menu.Items.Add(importButton);
+            importButton.Click += new EventHandler(import);
 
-            ToolStripMenuItem connectButton = new ToolStripMenuItem("File");
+            ToolStripMenuItem connectButton = new ToolStripMenuItem();
             connectButton.Text = "Connect";
             connectButton.TextAlign = ContentAlignment.BottomRight;
             menu.Items.Add(connectButton);
@@ -40,7 +45,13 @@ namespace Chess
 
         private void connect(object sender, EventArgs e)
         {
-            MessageBox.Show("l");
+            graphics.UserClicked(sender, e);
+            graphics.GraphicalServerConnect.show();
+        }
+        private void import(object sender, EventArgs e)
+        {
+            graphics.UserClicked(sender, e);
+            graphics.GraphicalImport.show();
         }
 
     }
