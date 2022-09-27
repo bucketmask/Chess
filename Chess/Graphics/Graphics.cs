@@ -18,6 +18,7 @@ namespace Chess
         public GraphicalNavBar GraphicalNavBar;
         public GraphicalServerConnect GraphicalServerConnect;
         public GraphicalImport GraphicalImport;
+        public GraphicalOpeningNames GraphicalOpeningNames;
         public Graphics(Form1 form, Main main)
         {
             this.graphicsForm = form;
@@ -38,6 +39,7 @@ namespace Chess
             GraphicalServerConnect = new GraphicalServerConnect(this, main);
             GraphicalBoard = new GraphicalBoard(this);
             GraphicalHistory = new GraphicalHistory(this);
+            GraphicalOpeningNames = new GraphicalOpeningNames(this);
 
             TextBox tb = new TextBox();
             graphicsForm.Controls.Add(tb);
