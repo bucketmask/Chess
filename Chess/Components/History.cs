@@ -12,7 +12,7 @@ namespace Chess
     {
         //needs graphics component
         Graphics graphics;
-        const string startingFen = "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR";
+        const string startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         //const string startingFen = "nbqrkrbn/pppppppp/8/8/8/8/PPPPPPPP/NBQRKRBN";
         //Each pointer?? is a halfmove
         //so even is white, odd is black moves
