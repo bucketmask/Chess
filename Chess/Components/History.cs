@@ -33,6 +33,9 @@ namespace Chess
             MoveNumber = 0;
             playerColour = colourforPlayer;
             board.History = this;
+
+            //reset graphics
+            graphics.GraphicalHistory.Reset();
         }
 
         //this sees if any moves where made, and if not sends a blank board

@@ -61,9 +61,10 @@ namespace Chess
             newItem.SubItems.Add(move);
         }
 
-        public void KeyDown(object sender, KeyEventArgs e)
+        public void Reset()
         {
-            Console.WriteLine("preess");
+            items.Clear();
+            table.Items.Clear();
         }
     }
 }
